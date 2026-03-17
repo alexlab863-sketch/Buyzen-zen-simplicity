@@ -1,0 +1,164 @@
+/* Umumiy sozlamalar */
+:root {
+    --bg-color: #0a0a0c;
+    --accent-color: #00f2ff; /* Neon ko'k */
+    --secondary-accent: #7000ff; /* Binafsha */
+    --text-color: #e0e0e0;
+    --header-bg: rgba(18, 18, 22, 0.95);
+  }
+  
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+  }
+  
+  /* Header qismi */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 5%;
+    background-color: var(--header-bg);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0, 242, 255, 0.2);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  }
+  
+  /* Logo */
+  .logo-img {
+    height: 40px;
+    filter: drop-shadow(0 0 5px var(--accent-color));
+    transition: transform 0.3s ease;
+  }
+  
+  .logo-img:hover {
+    transform: scale(1.05);
+  }
+  
+  /* Navigatsiya menyusi */
+  .nav-menu {
+    display: flex;
+    gap: 2rem;
+  }
+  
+  .nav-menu a {
+    text-decoration: none;
+    color: #888;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+  
+  .nav-menu a:hover, 
+  .nav-menu a.active {
+    color: var(--accent-color);
+    text-shadow: 0 0 10px rgba(0, 242, 255, 0.7);
+  }
+  
+  /* Faol havola uchun pastki chiziq effekti */
+  .nav-menu a.active::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--accent-color);
+    box-shadow: 0 0 10px var(--accent-color);
+  }
+  
+  /* Qidiruv inputi */
+  .search-form {
+    flex-grow: 0.2;
+  }
+  
+  .search-input {
+    width: 100%;
+    padding: 0.6rem 1rem;
+    background: #1a1a20;
+    border: 1px solid #333;
+    border-radius: 4px;
+    color: white;
+    outline: none;
+    transition: border 0.3s ease;
+  }
+  
+  .search-input:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 8px rgba(0, 242, 255, 0.3);
+  }
+  
+  /* User tugmalari */
+  .user-actions {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .user-actions button {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 0.5rem;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .user-actions button:hover {
+    background: rgba(0, 242, 255, 0.1);
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+  }
+  
+  /* Main content */
+  .main-content {
+    padding: 2rem 5%;
+    min-height: 80vh;
+  }
+
+  .logo-img {
+    /* Bo'yini 45px dan 70px gacha oshiramiz, eni avtomatik moslashadi */
+    height: 75px; 
+    width: auto;
+    
+    /* Logotipni oq fondan tozalash va neon qilish filtrlari */
+    filter: invert(1) brightness(1.6) contrast(1.2);
+    mix-blend-mode: screen;
+    
+    /* Neon nuri effektini ham biroz kuchaytiramiz */
+    drop-shadow: 0 0 15px rgba(0, 242, 255, 0.6);
+    
+    padding: 5px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
+  }
+  
+  .logo-img:hover {
+    /* Sichqoncha ustiga kelganda yanada yorqinroq bo'ladi */
+    filter: invert(1) brightness(2) contrast(1.5);
+    transform: scale(1.1) rotate(-3deg);
+    drop-shadow: 0 0 25px rgba(0, 242, 255, 0.9);
+  }
+  .logo-img {
+
+    height: 85px;
+  
+    filter: invert(1) contrast(2) brightness(1.2) blur(0.2px);
+  
+    /* Contrast yuqori bo'lsa, savatchaning ingichka chiziqlari yo'qoladi, 
+  
+       qalin harflar (U harfi) esa qoladi */
+  
+    mix-blend-mode: screen;
+  
+  } 
+  
+  
