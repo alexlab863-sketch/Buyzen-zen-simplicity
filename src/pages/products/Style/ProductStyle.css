@@ -70,3 +70,81 @@
     background: #3700b3;
 }
 
+/* Pagination umumiy konteyneri */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    list-style: none;
+    gap: 8px;
+    margin: 40px 0;
+    padding: 0;
+    user-select: none;
+  }
+  
+  /* Har bir raqamli tugma */
+  .page-item .page-link {
+    padding: 10px 18px;
+    background: rgba(18, 18, 22, 0.8);
+    border: 1px solid rgba(0, 242, 255, 0.2);
+    color: var(--text-color);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 500;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 45px;
+  }
+  
+  /* Sichqoncha ustiga kelganda (Hover) */
+  .page-item .page-link:hover:not(.disabled) {
+    background: rgba(0, 242, 255, 0.05);
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+    box-shadow: 0 0 15px rgba(0, 242, 255, 0.3);
+    transform: translateY(-2px);
+  }
+  
+  /* Aktiv sahifa (Hozirgi turgan sahifa) */
+  .page-item.active .page-link {
+    background: var(--accent-color);
+    color: #000;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 20px rgba(0, 242, 255, 0.6);
+    font-weight: 700;
+  }
+  
+  /* "Oldingi" va "Keyingi" tugmalari uchun maxsus rang */
+  .previous .page-link, .next .page-link {
+    background: rgba(112, 0, 255, 0.1); /* Binafsha tus */
+    border-color: rgba(112, 0, 255, 0.3);
+  }
+  
+  .previous .page-link:hover, .next .page-link:hover {
+    border-color: var(--secondary-accent);
+    box-shadow: 0 0 15px rgba(112, 0, 255, 0.4);
+    color: white;
+  }
+  
+  /* O'chirib qo'yilgan tugmalar (masalan, 1-sahifada turganda "Oldingi" tugmasi) */
+  .page-item.disabled .page-link {
+    opacity: 0.3;
+    cursor: not-allowed;
+    border-color: rgba(255, 255, 255, 0.1);
+    transform: none;
+  }
+  
+  /* Mobil qurilmalar uchun moslashuvchanlik */
+  @media (max-width: 600px) {
+    .pagination {
+      gap: 5px;
+    }
+    .page-item .page-link {
+      padding: 8px 12px;
+      font-size: 14px;
+      min-width: 35px;
+    }
+  }
