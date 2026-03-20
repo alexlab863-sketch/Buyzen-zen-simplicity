@@ -1,0 +1,158 @@
+.profile-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 28px 12px;
+  box-sizing: border-box;
+}
+
+.profile-card {
+  width: 100%;
+  max-width: 460px;
+  background: #16191f;
+  border: 1px solid #2d333d;
+  border-radius: 12px;
+  padding: 28px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  color: #ffffff;
+  text-align: left;
+}
+
+.profile-title {
+  margin: 0 0 8px 0;
+  font-size: 1.45rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.profile-email {
+  margin: 0 0 16px 0;
+  font-size: 0.9rem;
+  color: #94a3b8;
+  word-break: break-word;
+}
+
+.profile-input,
+.profile-textarea {
+  width: 100%;
+  background: #1e2229;
+  border: 1.5px solid #2d333d;
+  border-radius: 8px;
+  padding: 0 14px;
+  color: #ffffff;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.profile-input {
+  height: 44px;
+  margin-bottom: 12px;
+}
+
+.profile-textarea {
+  min-height: 96px;
+  resize: vertical;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+
+.profile-input:focus,
+.profile-textarea:focus {
+  outline: none;
+  border-color: #3498db;
+  background: #242931;
+}
+
+.profile-avatar {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  margin: 0 auto 16px auto;
+  object-fit: cover;
+  border: 2px solid #3498db;
+  display: block;
+}
+
+.profile-avatar-placeholder {
+  display: grid;
+  place-items: center;
+  font-size: 1.4rem;
+  font-weight: 700;
+  background: #2b5a80;
+  color: #ffffff;
+}
+
+.profile-btn,
+.profile-link-btn {
+  width: 100%;
+  height: 44px;
+  border: none;
+  border-radius: 8px;
+  background: #3498db;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.profile-btn:hover,
+.profile-link-btn:hover {
+  opacity: 0.9;
+}
+
+.profile-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.profile-link-btn {
+  margin-top: 10px;
+}
+
+.profile-status {
+  margin: 4px 0 12px 0;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.profile-status.success {
+  color: #4ade80;
+}
+
+.profile-status.error {
+  color: #f87171;
+}
+
+.profile-logout-btn {
+  margin-top: 10px;
+  background: #dc2626;
+}
+
+.profile-logout-btn:hover {
+  opacity: 0.92;
+}
+
+.loading {
+  color: #cbd5e1;
+  text-align: center;
+  padding: 40px 0;
+}
+
+@media (max-width: 520px) {
+  .profile-wrapper {
+    padding: 16px 0;
+  }
+
+  .profile-card {
+    border-radius: 10px;
+    padding: 20px 16px;
+  }
+}
