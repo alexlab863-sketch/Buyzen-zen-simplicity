@@ -10,6 +10,7 @@ import HomePage from './pages/home/HomePage'
 import Products from './pages/products/Products'
 import Profile from './pages/Profile/Profile'
 import NotFound from './pages/ErrorPage/NotFound'
+import CardDetailModal from './pages/products/CardDetailModal'
 
 function App() {
   
@@ -30,7 +31,7 @@ function App() {
     {path:"/link-confirm", element: <LinkConfirmation />},
     {path:"/forgot-password", element: <ForgotPassword />},
     {path:"/update-password", element: <UpdatePassword />},
-
+    {path:"product/:id", element: <CardDetailModal/>},
     
   ])
 
