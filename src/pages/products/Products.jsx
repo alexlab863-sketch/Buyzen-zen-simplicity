@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Card from './Card';
 import ReactPaginate from 'react-paginate'; 
 
+
 const Paginate = ReactPaginate.default ? ReactPaginate.default : ReactPaginate;
 
 function Products() {
@@ -43,7 +44,8 @@ function Products() {
         <div className="loading">Mahsulotlar yuklanmoqda...</div>
       ) : (
         <>
-       
+       {}
+     
           <Card products={currentItems} />
 
     

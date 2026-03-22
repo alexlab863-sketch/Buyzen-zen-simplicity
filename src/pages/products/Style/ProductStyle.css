@@ -1,13 +1,14 @@
 /* Card.css */
 .card-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 25px;
     padding: 30px;
     background: #0a0a0a; /* To'q fon */
 }
 
 .card-item {
+
     list-style: none;
     background: #1a1a1a;
     border-radius: 15px;
@@ -53,22 +54,19 @@
 }
 
 /* Tugma qo'shishni xohlasangiz */
-.card-content::after {
-    content: 'Sotib olish';
-    display: block;
-    margin-top: 15px;
+.card-btn {
+    margin-left: 80px;
+    display: inline-block;
+    margin-bottom: 20px;
+    padding: 10px 20px;
     background: #6200ee;
-    text-align: center;
-    padding: 8px;
+    color: white;
+    border: none;
     border-radius: 8px;
     cursor: pointer;
-    font-weight: bold;
-    transition: 0.3s;
+    transition: background 0.3s ease;
 }
 
-.card-item:hover .card-content::after {
-    background: #3700b3;
-}
 
 /* Pagination umumiy konteyneri */
 .pagination {
@@ -148,3 +146,322 @@
       min-width: 35px;
     }
   }
+
+
+  /* Container - Umumiy qora fon */
+.product-detail-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  max-width: 1300px;
+  margin: 40px auto;
+  padding: 30px;
+  background: var(--bg-color); /* Root.css dagi qora fon */
+  border-radius: 24px;
+  border: 1px solid rgba(0, 242, 255, 0.1); /* Neon hoshiya */
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+}
+
+/* Visual / Carousel qismi */
+.product-detail-visual {
+  width: 100%;
+  min-width: 0;
+  background: #121216; /* Biroz ochroq qora */
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  position: relative;
+}
+
+.product-detail-swiper {
+  width: 100%;
+  height: 550px;
+}
+
+.product-detail-slide {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.product-detail-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  /* Rasm ostida neon nur taralishi */
+  filter: drop-shadow(0 0 15px rgba(0, 242, 255, 0.15));
+}
+
+/* Swiper Strelkalari uchun neon effekt */
+.product-detail-swiper .swiper-button-next,
+.product-detail-swiper .swiper-button-prev {
+  background: rgba(18, 18, 22, 0.8);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 1px solid var(--accent-color);
+  box-shadow: 0 0 10px var(--accent-color);
+  transition: all 0.3s ease;
+}
+
+.product-detail-swiper .swiper-button-next:hover,
+.product-detail-swiper .swiper-button-prev:hover {
+  background: var(--accent-color);
+  color: #000 !important;
+}
+
+/* Info qismi */
+.product-detail-info {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  color: var(--text-color);
+}
+
+.product-detail-category {
+  font-size: 13px;
+  color: var(--accent-color);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 600;
+  text-shadow: 0 0 8px rgba(0, 242, 255, 0.5);
+}
+
+.product-detail-title {
+  font-size: 42px;
+  font-weight: 800;
+  color: #fff;
+  margin: 0;
+  letter-spacing: -1px;
+}
+
+.product-detail-rating {
+  font-weight: 600;
+  color: #ffcc00;
+  background: rgba(255, 204, 0, 0.1);
+  padding: 6px 14px;
+  border-radius: 10px;
+  width: fit-content;
+  border: 1px solid rgba(255, 204, 0, 0.2);
+}
+
+.product-detail-price-box {
+  margin: 10px 0;
+}
+
+.product-detail-price {
+  font-size: 38px;
+  font-weight: 800;
+  color: #fff;
+  /* Narxni neon qilish */
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+}
+
+.product-detail-desc {
+  font-size: 17px;
+  line-height: 1.8;
+  color: #b0b0b0;
+  max-width: 550px;
+}
+
+.product-detail-meta {
+  margin-top: 20px;
+  padding-top: 25px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.product-detail-meta-item {
+  font-size: 15px;
+  color: #999;
+}
+
+.product-detail-meta-item b {
+  color: var(--text-color);
+  margin-right: 5px;
+}
+
+/* Neon Sotib olish tugmasi */
+.product-detail-buy-btn {
+  margin-top: 30px;
+  background: transparent;
+  color: var(--accent-color);
+  border: 2px solid var(--accent-color);
+  padding: 20px;
+  font-size: 18px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 0 15px rgba(0, 242, 255, 0.1);
+}
+
+.product-detail-buy-btn:hover {
+  background: var(--accent-color);
+  color: #000;
+  transform: scale(1.02);
+  box-shadow: 0 0 30px var(--accent-color);
+}
+
+/* Mobil variant */
+@media (max-width: 1000px) {
+  .product-detail-container {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    margin: 20px;
+    padding: 15px;
+  }
+  
+  .product-detail-swiper {
+    height: 400px;
+  }
+
+  .product-detail-title {
+    font-size: 32px;
+  }
+}
+  /* Oldingi CSS-ga qo'shimchalar */
+
+.product-detail-top-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.product-detail-sku {
+  font-size: 12px;
+  color: #555;
+  font-family: monospace;
+}
+
+.product-detail-discount-badge {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: var(--secondary-accent);
+  color: #fff;
+  padding: 8px 15px;
+  border-radius: 10px;
+  font-weight: 800;
+  z-index: 10;
+  box-shadow: 0 0 15px var(--secondary-accent);
+}
+
+.product-detail-rating-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.product-detail-reviews-count {
+  color: #666;
+  font-size: 14px;
+}
+
+.product-detail-main-price {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.product-detail-old-price {
+  text-decoration: line-through;
+  color: #555;
+  font-size: 22px;
+}
+
+.product-detail-availability {
+  font-size: 14px;
+  color: #00ff88;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+/* Jozibador perklar uchun stil */
+.product-detail-perks {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.perk-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 12px 18px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: 0.3s;
+}
+
+.perk-item:hover {
+  background: rgba(0, 242, 255, 0.05);
+  border-color: var(--accent-color);
+}
+
+.perk-icon {
+  font-style: normal;
+  font-size: 20px;
+}
+
+.perk-item span {
+  font-size: 14px;
+  color: #ccc;
+}
+
+/* QR kod uchun minimalistik va chiroyli uslub */
+.product-detail-qr-section {
+  display: flex;
+  justify-content: center; /* Markazga tekislash */
+  padding: 100px;
+  margin-top: 10px;
+}
+
+.qr-code-img {
+  width: max-content;
+  height: max-content;
+  background: #ffffff; /* QR kod oq fonda bo'lishi shart! */
+  padding: 8px; /* Hoshiya uchun */
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0, 242, 255, 0.2); /* Neon effekt */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.qr-code-wrapper {
+  display: flex;
+ 
+  align-items: center;
+  gap: 15px;
+}
+
+.product-barcode-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 0.6; /* Juda yorqin bo'lmasligi uchun */
+  transition: opacity 0.3s ease;
+}
+
+.product-barcode-wrapper:hover {
+  opacity: 1; /* Ustiga borganda aniq ko'rinadi */
+}
+
+.barcode-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--accent-color);
+  margin-bottom: 4px;
+}
+
+.barcode-img{
+  cursor: pointer;
+}

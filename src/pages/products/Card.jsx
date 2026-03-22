@@ -1,6 +1,12 @@
 import "./Style/ProductStyle.css";
+import { useNavigate } from "react-router-dom";
 
-export default function Card({ products }) { 
+
+export default function Card({ products }) {
+    const naviagate = useNavigate();
+    function getproductid(id){
+       naviagate(`/product/${id}`);
+    }
     return (
         <div className="card-container"> 
             {products && products.map(product => (
@@ -11,8 +17,9 @@ export default function Card({ products }) {
                         <p className="card-brand">{product.brand}</p>
                         <p className="card-price">Narx: ${product.price}</p> 
                     </div>
-                    <button className="card-btn">Batafsil</button>
+                    <button className="card-btn" onClick={()=> {getproductid(product.id)}}>Batafsil</button>
                 </div>
+            
             ))}
         </div>
     );
