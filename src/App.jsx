@@ -11,6 +11,7 @@ import Products from './pages/products/Products'
 import Profile from './pages/Profile/Profile'
 import NotFound from './pages/ErrorPage/NotFound'
 import CardDetailModal from './pages/products/CardDetailModal'
+import Basket from './pages/Basket/Basket'
 
 function App() {
   
@@ -22,6 +23,7 @@ function App() {
       children: [  
       {path:  '/', element: <HomePage/>},
       {path: 'products', element: <Products/>},
+      {path: '/basket', element: <Basket/>},
       {path: 'profile', element: <Profile/>},
           ]
     },
