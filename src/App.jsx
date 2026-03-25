@@ -10,6 +10,7 @@ import HomePage from './pages/home/HomePage'
 import Products from './pages/products/Products'
 import Profile from './pages/Profile/Profile'
 import NotFound from './pages/ErrorPage/NotFound'
+import SellerForm from './pages/Profile/SellerForm'
 
 function App() {
   
@@ -22,6 +23,7 @@ function App() {
       {path:  '/', element: <HomePage/>},
       {path: 'products', element: <Products/>},
       {path: 'profile', element: <Profile/>},
+      {path:'become-seller', element: <SellerForm/>}
           ]
     },
 
