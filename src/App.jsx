@@ -11,6 +11,8 @@ import Products from './pages/products/Products'
 import Profile from './pages/Profile/Profile'
 import NotFound from './pages/ErrorPage/NotFound'
 import SellerForm from './pages/Profile/SellerForm'
+import CardDetailModal from './pages/products/CardDetailModal'
+import Basket from './pages/Basket/Basket'
 
 function App() {
   
@@ -22,6 +24,7 @@ function App() {
       children: [  
       {path:  '/', element: <HomePage/>},
       {path: 'products', element: <Products/>},
+      {path: '/basket', element: <Basket/>},
       {path: 'profile', element: <Profile/>},
       {path:'become-seller', element: <SellerForm/>}
           ]
@@ -32,7 +35,7 @@ function App() {
     {path:"/link-confirm", element: <LinkConfirmation />},
     {path:"/forgot-password", element: <ForgotPassword />},
     {path:"/update-password", element: <UpdatePassword />},
-
+    {path:"product/:id", element: <CardDetailModal/>},
     
   ])
 
