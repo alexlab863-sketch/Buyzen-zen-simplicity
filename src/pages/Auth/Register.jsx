@@ -44,6 +44,7 @@ export default function Register() {
                 data: {
                     full_name: fullName,
                     is_seller: false,
+                    role: 'user',
                 }
             }
         });
