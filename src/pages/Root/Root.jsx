@@ -18,8 +18,8 @@ export default function Root() {
           <NavLink to="/products" className={({ isActive }) => isActive ? "active" : ""}>
             Products
           </NavLink>
-          <NavLink to="/liked" className={({ isActive }) => isActive ? "active" : ""}>
-            Liked
+          <NavLink to="/basket" className={({ isActive }) => isActive ? "active" : ""}>
+            Basket
           </NavLink>
           <NavLink to="/profile" className={({ isActive }) => isActive ? "active" : ""}>
             Profile
