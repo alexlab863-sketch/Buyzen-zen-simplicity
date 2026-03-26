@@ -335,7 +335,7 @@ export default function SellerForm() {
   };
 
   if (loading) {
-    return <p className="loading">Seller form yuklanmoqda...</p>;
+    return <p className="loading">Sotuvchi profili yuklanmoqda...</p>;
   }
 
   return (
@@ -343,7 +343,7 @@ export default function SellerForm() {
       <section className="seller-layout">
         <article className="seller-hero-card">
           <span className="seller-chip">Buyzen Seller</span>
-          <h1 className="seller-title">Do&apos;koningizni bugunoq ishga tushiring</h1>
+          <h1 className="seller-title">Do'koningizni bugunoq ishga tushiring</h1>
           <p className="seller-subtitle">
             Seller hisobga o&apos;tib, mahsulotlaringizni joylashtiring va ko&apos;proq
             mijozlarga tezroq chiqing.

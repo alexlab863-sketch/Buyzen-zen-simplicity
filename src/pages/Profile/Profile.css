@@ -397,10 +397,272 @@
   background: rgba(15, 29, 48, 0.95);
 }
 
+.profile-seller-button {
+  width: 100%;
+  cursor: pointer;
+  background: var(--profile-surface);
+  border: 1px solid var(--profile-border);
+  color: #e2e8f0;
+  font: inherit;
+}
+
 .profile-seller-link::after {
   content: '->';
   color: #7dd3fc;
   font-weight: 700;
+}
+
+.profile-products-panel {
+  margin-top: 18px;
+  border-radius: 24px;
+  padding: 22px;
+  background: var(--profile-surface);
+  border: 1px solid var(--profile-border);
+  backdrop-filter: blur(16px);
+}
+
+.profile-products-head h3 {
+  margin: 0 0 8px;
+  color: var(--profile-text);
+}
+
+.profile-products-head p {
+  margin: 0;
+  color: var(--profile-muted);
+  line-height: 1.55;
+}
+
+.profile-products-list {
+  margin-top: 18px;
+  display: grid;
+  gap: 12px;
+}
+
+.profile-product-item {
+  width: 100%;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 18px;
+  padding: 16px 18px;
+  background: var(--profile-surface-strong);
+  color: var(--profile-text);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.profile-product-item:hover {
+  transform: translateY(-2px);
+  border-color: rgba(56, 189, 248, 0.36);
+  box-shadow: 0 16px 30px rgba(15, 23, 42, 0.22);
+}
+
+.profile-product-item span,
+.profile-product-item small {
+  display: block;
+}
+
+.profile-product-item span {
+  font-weight: 700;
+}
+
+.profile-product-item small {
+  color: var(--profile-muted);
+}
+
+.profile-product-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  padding: 24px;
+  display: grid;
+  place-items: center;
+  background: rgba(2, 8, 23, 0.72);
+  backdrop-filter: blur(8px);
+}
+
+.profile-product-modal {
+  width: min(100%, 860px);
+  max-height: calc(100vh - 48px);
+  overflow: auto;
+  border-radius: 34px;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  background:
+    radial-gradient(circle at top right, rgba(56, 189, 248, 0.22), transparent 28%),
+    radial-gradient(circle at bottom left, rgba(34, 197, 94, 0.16), transparent 34%),
+    linear-gradient(180deg, rgba(8, 17, 30, 0.99), rgba(10, 20, 34, 0.98));
+  box-shadow:
+    0 36px 80px rgba(2, 8, 23, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.profile-product-close {
+  min-height: 42px;
+  padding: 0 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: rgba(148, 163, 184, 0.08);
+  color: var(--profile-text);
+  cursor: pointer;
+}
+
+.profile-product-modal-media {
+  position: relative;
+}
+
+.profile-product-modal-media img {
+  width: 100%;
+  height: min(44vw, 360px);
+  object-fit: cover;
+  display: block;
+}
+
+.profile-product-modal-content {
+  padding: 24px;
+  color: var(--profile-text);
+}
+
+.profile-product-modal-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.profile-product-preview {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 18px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: rgba(15, 23, 42, 0.55);
+}
+
+.profile-product-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.profile-product-preview-image {
+  width: 100%;
+  height: 180px;
+  display: block;
+  object-fit: cover;
+}
+
+.profile-carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 46px;
+  height: 46px;
+  border: none;
+  border-radius: 999px;
+  background: rgba(8, 17, 30, 0.72);
+  color: #fff;
+  font-size: 1.2rem;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+}
+
+.profile-carousel-btn-left {
+  left: 16px;
+}
+
+.profile-carousel-btn-right {
+  right: 16px;
+}
+
+.profile-carousel-dots {
+  margin-top: 16px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.profile-carousel-dot {
+  width: 12px;
+  height: 12px;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.35);
+  cursor: pointer;
+}
+
+.profile-carousel-dot.active {
+  width: 28px;
+  background: linear-gradient(135deg, #38bdf8, #22c55e);
+}
+
+.profile-product-modal-content h2 {
+  margin: 14px 0 10px;
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+}
+
+.profile-product-modal-content p {
+  margin: 0;
+  color: var(--profile-muted);
+  line-height: 1.7;
+}
+
+.profile-product-modal-grid {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.profile-product-modal-meta {
+  border-radius: 22px;
+  padding: 18px;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.72), rgba(15, 23, 42, 0.54));
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.profile-product-modal-meta strong,
+.profile-product-modal-meta span {
+  display: block;
+}
+
+.profile-product-modal-meta strong {
+  margin-bottom: 8px;
+  color: #bae6fd;
+}
+
+.profile-product-modal-meta span {
+  color: #e2e8f0;
+  word-break: break-word;
+}
+
+.profile-stock-editor {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.profile-stock-input {
+  min-width: 0;
+}
+
+.profile-stock-save {
+  min-height: 52px;
+  white-space: nowrap;
+}
+
+.profile-product-modal-actions {
+  margin-top: 18px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.profile-delete-product-btn {
+  min-width: 220px;
 }
 
 .seller-page-wrapper {
@@ -582,5 +844,34 @@
   .profile-seller-link,
   .profile-top {
     border-radius: 20px;
+  }
+
+  .profile-product-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .profile-product-modal-overlay {
+    padding: 12px;
+  }
+
+  .profile-product-modal-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-stock-editor {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-product-modal-top {
+    flex-direction: column;
+  }
+
+  .profile-product-modal-actions {
+    justify-content: stretch;
+  }
+
+  .profile-delete-product-btn {
+    width: 100%;
   }
 }
