@@ -26,7 +26,8 @@ function App() {
       {path: 'products', element: <Products/>},
       {path: '/basket', element: <Basket/>},
       {path: 'profile', element: <Profile/>},
-      {path:'become-seller', element: <SellerForm/>}
+      {path:'become-seller', element: <SellerForm/>},
+      {path:'profile/add-product', element: <AddProduct/>}
           ]
     },
 
