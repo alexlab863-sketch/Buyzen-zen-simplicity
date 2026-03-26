@@ -11,6 +11,283 @@ const EMPTY_FORM = {
   avatar_url: '',
 };
 
+const PRODUCT_GALLERY_STORAGE_KEY = 'buyzen_product_galleries';
+
+function SellerProductsPanel({ userId }) {
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [products, setProducts] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [errorText, setErrorText] = useState('');
+  const [stockValue, setStockValue] = useState('');
+  const [updatingStock, setUpdatingStock] = useState(false);
+  const [deletingProduct, setDeletingProduct] = useState(false);
+  const [galleryImages, setGalleryImages] = useState([]);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const formatPrice = (value) => `${Number(value || 0).toLocaleString('uz-UZ')} so'm`;
+  const currentImage = galleryImages[currentImageIndex] || selectedProduct?.image_url || '';
+
+  const loadProducts = async () => {
+    if (!userId) return;
+
+    setLoading(true);
+    setErrorText('');
+    const { data, error } = await supabase
+      .from('products')
+      .select('*')
+      .eq('seller_id', userId)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      setErrorText(isRlsError(error) ? "Mahsulotlarni o'qishga ruxsat yo'q." : error.message);
+      setLoading(false);
+      return;
+    }
+
+    setProducts(data || []);
+    setLoading(false);
+  };
+
+  const handleToggle = async () => {
+    const nextOpen = !open;
+    setOpen(nextOpen);
+
+    if (nextOpen && products.length === 0 && !loading) {
+      await loadProducts();
+    }
+  };
+
+  const handleOpenProduct = (product) => {
+    const storedGalleries = JSON.parse(localStorage.getItem(PRODUCT_GALLERY_STORAGE_KEY) || '{}');
+    const images = storedGalleries[product.id] || [product.image_url].filter(Boolean);
+    setSelectedProduct(product);
+    setStockValue(String(product.stock_count ?? 0));
+    setGalleryImages(images);
+    setCurrentImageIndex(0);
+  };
+
+  const handleStockUpdate = async () => {
+    if (!selectedProduct) return;
+
+    const nextStock = Number(stockValue);
+
+    if (Number.isNaN(nextStock) || nextStock <= 0) {
+      setErrorText("Mahsulot soni 0 dan katta bo'lishi kerak.");
+      return;
+    }
+
+    setUpdatingStock(true);
+    setErrorText('');
+
+    const { error } = await supabase
+      .from('products')
+      .update({ stock_count: nextStock })
+      .eq('id', selectedProduct.id)
+      .eq('seller_id', userId);
+
+    if (error) {
+      setUpdatingStock(false);
+      setErrorText(isRlsError(error) ? "Mahsulotni yangilashga ruxsat yo'q." : error.message);
+      return;
+    }
+
+    const updatedProduct = { ...selectedProduct, stock_count: nextStock };
+    setSelectedProduct(updatedProduct);
+    setProducts((prev) => prev.map((item) => (item.id === updatedProduct.id ? updatedProduct : item)));
+    setStockValue(String(nextStock));
+    setUpdatingStock(false);
+  };
+
+  const handleDeleteProduct = async () => {
+    if (!selectedProduct) return;
+
+    setDeletingProduct(true);
+    setErrorText('');
+    const productIdToDelete = selectedProduct.id;
+    const { error } = await supabase
+      .from('products')
+      .delete()
+      .eq('id', productIdToDelete)
+      .eq('seller_id', userId);
+
+    if (error) {
+      setDeletingProduct(false);
+      setErrorText(isRlsError(error) ? "Mahsulotni o'chirishga ruxsat yo'q." : error.message);
+      return;
+    }
+
+    const storedGalleries = JSON.parse(localStorage.getItem(PRODUCT_GALLERY_STORAGE_KEY) || '{}');
+    delete storedGalleries[productIdToDelete];
+    localStorage.setItem(PRODUCT_GALLERY_STORAGE_KEY, JSON.stringify(storedGalleries));
+    setSelectedProduct(null);
+    setGalleryImages([]);
+    setCurrentImageIndex(0);
+    await loadProducts();
+    setDeletingProduct(false);
+  };
+
+  const handlePrevImage = () => {
+    setCurrentImageIndex((prev) => (prev === 0 ? galleryImages.length - 1 : prev - 1));
+  };
+
+  const handleNextImage = () => {
+    setCurrentImageIndex((prev) => (prev === galleryImages.length - 1 ? 0 : prev + 1));
+  };
+
+  return (
+    <>
+      <button type="button" className="profile-seller-link profile-seller-button" onClick={handleToggle}>
+        {open ? 'Mahsulotlarni yashirish' : "Mahsulotlarni ko'rish"}
+      </button>
+
+      {open && (
+        <section className="profile-products-panel">
+          <div className="profile-products-head">
+            <h3>Qo&apos;shilgan mahsulotlar</h3>
+            <p>Mahsulot nomini bossangiz, modal oynada to&apos;liq ma&apos;lumot ochiladi.</p>
+          </div>
+
+          {loading ? (
+            <p className="loading">Mahsulotlar yuklanmoqda...</p>
+          ) : errorText ? (
+            <p className="profile-status error">{errorText}</p>
+          ) : products.length === 0 ? (
+            <p className="profile-status error">Siz hali mahsulot qo&apos;shmagansiz.</p>
+          ) : (
+            <div className="profile-products-list">
+              {products.map((product) => (
+                <button
+                  key={product.id}
+                  type="button"
+                  className="profile-product-item"
+                  onClick={() => handleOpenProduct(product)}
+                >
+                  <span>{product.name || 'Nomsiz mahsulot'}</span>
+                  <small>{product.category || 'Kategoriya yo&apos;q'}</small>
+                </button>
+              ))}
+            </div>
+          )}
+        </section>
+      )}
+
+      {selectedProduct && (
+        <div className="profile-product-modal-overlay" onClick={() => setSelectedProduct(null)}>
+          <div className="profile-product-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="profile-product-modal-media">
+              <img
+                src={currentImage || 'https://dummyimage.com/640x420/0f172a/ffffff&text=Product'}
+                alt={selectedProduct.name || 'Mahsulot rasmi'}
+              />
+              {galleryImages.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    className="profile-carousel-btn profile-carousel-btn-left"
+                    onClick={handlePrevImage}
+                  >
+                    {'<'}
+                  </button>
+                  <button
+                    type="button"
+                    className="profile-carousel-btn profile-carousel-btn-right"
+                    onClick={handleNextImage}
+                  >
+                    {'>'}
+                  </button>
+                </>
+              )}
+            </div>
+
+            <div className="profile-product-modal-content">
+              <div className="profile-product-modal-top">
+                <div>
+                  <span className="profile-badge">{selectedProduct.category || 'Kategoriya'}</span>
+                  <h2>{selectedProduct.name || 'Nomsiz mahsulot'}</h2>
+                </div>
+                <button
+                  type="button"
+                  className="profile-product-close"
+                  onClick={() => setSelectedProduct(null)}
+                >
+                  Yopish
+                </button>
+              </div>
+
+              <p>{selectedProduct.description || "Tavsif mavjud emas."}</p>
+
+              {galleryImages.length > 1 && (
+                <div className="profile-carousel-dots">
+                  {galleryImages.map((image, index) => (
+                    <button
+                      key={`${selectedProduct.id}-${index}`}
+                      type="button"
+                      className={`profile-carousel-dot ${index === currentImageIndex ? 'active' : ''}`}
+                      onClick={() => setCurrentImageIndex(index)}
+                      aria-label={`Rasm ${index + 1}`}
+                    />
+                  ))}
+                </div>
+              )}
+
+              <div className="profile-product-modal-grid">
+                <div className="profile-product-modal-meta">
+                  <strong>Narx</strong>
+                  <span>{formatPrice(selectedProduct.price)}</span>
+                </div>
+                <div className="profile-product-modal-meta">
+                  <strong>Soni</strong>
+                  <div className="profile-stock-editor">
+                    <input
+                      type="number"
+                      min="1"
+                      className="profile-input profile-stock-input"
+                      value={stockValue}
+                      onChange={(e) => setStockValue(e.target.value)}
+                    />
+                    <button
+                      type="button"
+                      className="profile-btn profile-stock-save"
+                      onClick={handleStockUpdate}
+                      disabled={updatingStock}
+                    >
+                      {updatingStock ? 'Saqlanmoqda...' : 'Saqlash'}
+                    </button>
+                  </div>
+                </div>
+                <div className="profile-product-modal-meta">
+                  <strong>ID</strong>
+                  <span>{selectedProduct.id}</span>
+                </div>
+                <div className="profile-product-modal-meta">
+                  <strong>Qo&apos;shilgan vaqt</strong>
+                  <span>
+                    {selectedProduct.created_at
+                      ? new Date(selectedProduct.created_at).toLocaleString()
+                      : 'Mavjud emas'}
+                  </span>
+                </div>
+              </div>
+
+              <div className="profile-product-modal-actions">
+                <button
+                  type="button"
+                  className="profile-btn profile-logout-btn profile-delete-product-btn"
+                  onClick={handleDeleteProduct}
+                  disabled={deletingProduct}
+                >
+                  {deletingProduct ? "O'chirilmoqda..." : "Mahsulotni olib tashlash"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
 export default function Profile() {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
@@ -19,6 +296,7 @@ export default function Profile() {
   const [form, setForm] = useState(EMPTY_FORM);
   const [email, setEmail] = useState('');
   const [userId, setUserId] = useState('');
+  const [isSeller, setIsSeller] = useState(false);
   const [status, setStatus] = useState({ type: '', text: '' });
   const [profileStore, setProfileStore] = useState(null);
 
@@ -66,6 +344,7 @@ export default function Profile() {
       setUserId(user.id);
 
       const metadata = user.user_metadata || {};
+      const sellerFromMeta = Boolean(metadata.is_seller || metadata.role === 'seller');
       const mergedForm = {
         full_name: metadata.full_name || '',
         phone: metadata.phone || '',
@@ -103,6 +382,8 @@ export default function Profile() {
       }
 
       if (profileData) {
+        const sellerFromTable = Boolean(profileData.is_seller || profileData.role === 'seller');
+        setIsSeller(sellerFromMeta || sellerFromTable);
         setForm({
           full_name: profileData.full_name || profileData.name || mergedForm.full_name,
           phone: profileData.phone || profileData.phone_number || mergedForm.phone,
@@ -111,6 +392,7 @@ export default function Profile() {
             profileData.avatar_url || profileData.avatar || profileData.image_url || mergedForm.avatar_url,
         });
       } else {
+        setIsSeller(sellerFromMeta);
         setForm(mergedForm);
       }
 
@@ -243,6 +525,7 @@ export default function Profile() {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
+    localStorage.clear()
     navigate('/login');
   };
 
@@ -329,8 +612,8 @@ export default function Profile() {
 
           <div className="profile-section">
             <div className="profile-section-head">
-              <h3>Asosiy ma&apos;lumotlar</h3>
-              <p>Bu ma&apos;lumotlar profilingizda ko&apos;rinadi.</p>
+              <h3>Asosiy ma'lumotlar</h3>
+              <p>Bu ma'lumotlar profilingizda ko'rinadi.</p>
             </div>
 
             <div className="profile-grid">
@@ -387,6 +670,15 @@ export default function Profile() {
         <Link to="/become-seller" className="profile-seller-link">
           sotuvchi profili
         </Link>
+
+        {isSeller && (
+          <>
+            <Link to="/profile/add-product" className="profile-seller-link">
+              Yangi mahsulot qo'shish
+            </Link>
+            <SellerProductsPanel userId={userId} />
+          </>
+        )}
       </div>
     </div>
   );
