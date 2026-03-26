@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 export default function Card({ products }) {
     const naviagate = useNavigate();
     function getproductid(id){
+       if (Number.isNaN(Number(id))) return;
        naviagate(`/product/${id}`);
     }
     return (
@@ -17,7 +18,9 @@ export default function Card({ products }) {
                         <p className="card-brand">{product.brand}</p>
                         <p className="card-price">Narx: ${product.price}</p> 
                     </div>
-                    <button className="card-btn" onClick={()=> {getproductid(product.id)}}>Batafsil</button>
+                    <button className="card-btn" onClick={()=> {getproductid(product.id)}} disabled={Number.isNaN(Number(product.id))}>
+                      {Number.isNaN(Number(product.id)) ? "Batafsil yo'q" : "Batafsil"}
+                    </button>
                 </div>
             
             ))}

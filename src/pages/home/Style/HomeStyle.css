@@ -1,94 +1,110 @@
-/* Karusel konteyneri */
-.carousel-container {
-    width: 100%;
-    max-width: 1200px;
-    margin: 20px auto;
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-}
-  
-.mySwiper {
-    width: 100%;
-    height: 500px;
-}
-  
-.slide-content {
-    position: relative;
-    width: 100%;
-    height: 100%;
-}
-  
-/* Rasm stillari */
-.carousel-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-  
-/* Rasm ustidagi qora qatlam (Overlay) */
-.image-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(to right, rgba(0, 0, 0, 0.8) 0%, transparent 60%);
-    display: flex;
-    align-items: center; /* Markazroqqa olib keldik */
-    padding: 60px;
-    box-sizing: border-box;
-}
-  
-/* Matn stillari va yangi animatsiya logikasi */
-.text-content h2, .text-content p {
-    color: white;
-    opacity: 0;
-    transform: translateX(-100px); /* Chapga surib qo'yamiz */
-    transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+.home-page {
+  display: grid;
+  gap: 24px;
 }
 
-/* Faqat aktiv slayddagi matnlarni harakatga keltiramiz */
+.home-page h2 {
+  margin: 0;
+  padding: 24px 28px;
+  border-radius: 24px;
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-soft);
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+}
+
+.carousel-container {
+  width: 100%;
+  margin: 0 auto;
+  border-radius: 28px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-strong);
+  background: rgba(8, 17, 30, 0.88);
+}
+
+.mySwiper {
+  width: 100%;
+  height: 520px;
+}
+
+.slide-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.carousel-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(7, 17, 31, 0.88) 0%, rgba(7, 17, 31, 0.28) 58%, transparent 100%),
+    linear-gradient(180deg, rgba(56, 189, 248, 0.12), transparent 60%);
+  display: flex;
+  align-items: center;
+  padding: 60px;
+}
+
+.text-content h2,
+.text-content p {
+  color: white;
+  opacity: 0;
+  transform: translateX(-80px);
+  transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
 .swiper-slide-active .text-content h2 {
-    opacity: 1;
-    transform: translateX(0);
-    transition-delay: 0.2s; /* Sarlavha birinchi chiqadi */
+  opacity: 1;
+  transform: translateX(0);
+  transition-delay: 0.15s;
 }
 
 .swiper-slide-active .text-content p {
-    opacity: 1;
-    transform: translateX(0);
-    transition-delay: 0.4s; /* Tavsif biroz keyinroq */
+  opacity: 1;
+  transform: translateX(0);
+  transition-delay: 0.32s;
 }
 
 .text-content h2 {
-    font-size: 3rem;
-    margin-bottom: 15px;
-    font-weight: 800;
-    text-transform: uppercase;
-}
-  
-.text-content p {
-    font-size: 1.3rem;
-    max-width: 500px;
-    line-height: 1.6;
-}
-  
-/* Swiper tugmalari rangi */
-:root {
-    --swiper-theme-color: #ffffff;
-    --swiper-navigation-size: 30px;
+  margin: 0 0 16px;
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  line-height: 1.02;
+  text-transform: uppercase;
 }
 
-/* Mobil qurilmalar uchun */
+.text-content p {
+  margin: 0;
+  font-size: 1.08rem;
+  max-width: 580px;
+  line-height: 1.7;
+  color: #dbeafe;
+}
+
+:root {
+  --swiper-theme-color: #ffffff;
+  --swiper-navigation-size: 30px;
+}
+
 @media (max-width: 768px) {
-    .mySwiper {
-      height: 350px;
-    }
-    .text-content h2 {
-      font-size: 1.8rem;
-    }
-    .image-overlay {
-      padding: 20px;
-    }
+  .mySwiper {
+    height: 360px;
+  }
+
+  .image-overlay {
+    padding: 24px;
+  }
+
+  .text-content h2 {
+    font-size: 1.8rem;
+  }
+
+  .text-content p {
+    font-size: 0.95rem;
+  }
 }
