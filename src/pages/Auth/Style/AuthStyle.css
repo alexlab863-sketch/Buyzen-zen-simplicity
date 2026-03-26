@@ -1,160 +1,127 @@
-:root {
-    --bg-deep: #0f1115;      /* Juda toza to'q fon */
-    --card-bg: #16191f;      /* Kartochka foni */
-    --accent-blue: #3498db;  /* Moviy aksent */
-    --text-primary: #ffffff; /* Asosiy matn */
-    --text-secondary: #94a3b8; /* Yordamchi matn */
-    --input-bg: #1e2229;     /* Input foni */
-    --border-color: #2d333d; /* Chegara rangi */
-  }
-  
-  .auth-page-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    background-color: var(--bg-deep);
-    font-family: 'Inter', system-ui, sans-serif;
-    color: var(--text-primary);
-  }
-  
-  .auth-card {
-    background: var(--card-bg);
-    width: 100%;
-    max-width: 400px;
-    padding: 40px;
-    border-radius: 12px;
-    border: 1px solid var(--border-color);
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-  }
-  
-  /* Sarlavha - Edge kabi bachkana emas, Chrome kabi oddiy */
-  .auth-card h1 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 8px;
-    text-align: left; /* Markazda emas, chapda professionalroq */
-  }
-  
-  .auth-card p.subtitle {
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    margin-bottom: 24px;
-  }
-  
-  /* Form elementlari */
-  .auth-form-group {
-    margin-bottom: 20px;
-  }
-  
-  .auth-form-group label {
-    display: block;
-    font-size: 0.85rem;
-    font-weight: 500;
-    margin-bottom: 8px;
-    color: var(--text-secondary);
-  }
-  
-  .auth-form-group input {
-    width: 100%;
-    height: 44px;
-    background: var(--input-bg);
-    border: 1.5px solid var(--border-color);
-    border-radius: 8px;
-    padding: 0 16px;
-    color: white;
-    font-size: 0.95rem;
-    transition: all 0.2s ease;
-    box-sizing: border-box;
-  }
-  
-  .auth-form-group input:focus {
-    outline: none;
-    border-color: var(--accent-blue);
-    background: #242931;
-  }
-  
-  /* Password eye icon */
-  .password-input-wrapper {
-    position: relative;
-  }
-  
-  .eye-icon {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    color: var(--text-secondary);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-  }
-  
-  /* Asosiy tugma - Soddalikda kuch */
-  .auth-submit-btn {
-    width: 100%;
-    height: 44px;
-    background: var(--accent-blue);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    margin-top: 10px;
-    transition: opacity 0.2s;
-  }
-  
-  .auth-submit-btn:hover {
-    opacity: 0.9;
-  }
-  
-  .auth-submit-btn:active {
-    transform: scale(0.99);
-  }
-  
-  /* Footer va Linklar */
-  .auth-footer {
-    margin-top: 24px;
-    text-align: center;
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-  }
-  
-  .auth-link {
-    color: var(--accent-blue);
-    text-decoration: none;
-    margin-left: 4px;
-    font-weight: 500;
-  }
-  
-  .auth-link:hover {
-    text-decoration: underline;
-  }
-  
-  /* Xatolik xabari - Juda ehtiyotkor */
-  .auth-error-msg {
-    background: rgba(231, 76, 60, 0.1);
-    color: #e74c60;
-    padding: 10px 14px;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    margin-bottom: 20px;
-    border: 1px solid rgba(231, 76, 60, 0.2);
-  }
-
-.auth-forgot-section{
-  padding: 30px 0 0 0 ;
-  text-align: center;
+.auth-page-wrapper {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background:
+    radial-gradient(circle at top right, rgba(56, 189, 248, 0.14), transparent 26%),
+    radial-gradient(circle at bottom left, rgba(34, 197, 94, 0.1), transparent 28%),
+    linear-gradient(180deg, #07111f 0%, #081625 45%, #09111d 100%);
+  color: var(--text-color);
 }
 
-.auth-forgot-section-escape-btn{
-  padding: 15px 45px;
-  border-radius: 15px;
-  text-decoration: none;
-  font-weight: 500;
-  color: white;
+.auth-card {
+  width: min(100%, 460px);
+  padding: 34px;
+  border-radius: 28px;
+  background: rgba(8, 17, 30, 0.9);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-strong);
+}
 
+.auth-card h1 {
+  margin: 0 0 8px;
+  font-size: 1.8rem;
+}
+
+.auth-card p.subtitle,
+.auth-footer,
+.auth-form-group label,
+.eye-icon {
+  color: var(--muted-text);
+}
+
+.auth-form-group {
+  margin-bottom: 18px;
+}
+
+.auth-form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+.auth-form-group input {
+  width: 100%;
+  height: 50px;
+  padding: 0 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: var(--surface-strong);
+  color: var(--text-color);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.auth-form-group input:focus {
+  outline: none;
+  border-color: rgba(56, 189, 248, 0.65);
+  box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.12);
+  transform: translateY(-1px);
+}
+
+.password-input-wrapper {
+  position: relative;
+}
+
+.eye-icon {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.auth-submit-btn,
+.auth-forgot-section-escape-btn {
+  width: 100%;
+  min-height: 52px;
+  border: none;
+  border-radius: 18px;
+  background: linear-gradient(135deg, var(--accent-color), var(--accent-strong));
+  color: #03111d;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-submit-btn:hover,
+.auth-forgot-section-escape-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 36px rgba(56, 189, 248, 0.2);
+}
+
+.auth-footer {
+  margin-top: 22px;
+  text-align: center;
+  line-height: 1.7;
+}
+
+.auth-link {
+  color: #7dd3fc;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.auth-link:hover {
+  color: #bae6fd;
+}
+
+.auth-error-msg {
+  margin-bottom: 18px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.18);
+  color: #fecaca;
+}
+
+.auth-forgot-section {
+  padding-top: 24px;
+  text-align: center;
 }

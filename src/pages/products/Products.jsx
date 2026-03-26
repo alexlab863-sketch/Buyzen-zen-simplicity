@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import Card from './Card';
 import ReactPaginate from 'react-paginate'; 
+import { supabase } from '../../supabaseClient';
+import { isMissingSchemaError, isRlsError } from '../../utils/supabaseAdaptive';
 
 
 const Paginate = ReactPaginate.default ? ReactPaginate.default : ReactPaginate;
@@ -11,10 +13,44 @@ function Products() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        const productSources = ['products', 'seller_products', 'shop_products'];
+        let supabaseProducts = null;
+
+        for (const table of productSources) {
+          const { data, error } = await supabase.from(table).select('*').limit(1000);
+
+          if (error) {
+            if (isMissingSchemaError(error) || isRlsError(error)) {
+              continue;
+            }
+            console.error('Supabase xatolik:', error.message);
+            continue;
+          }
+
+          if (data?.length) {
+            supabaseProducts = data.map((item, index) => ({
+              id: item.id ?? item.product_id ?? `${table}-${index}`,
+              title: item.title ?? item.name ?? 'Nomsiz mahsulot',
+              brand: item.brand ?? item.store_name ?? item.seller_name ?? '',
+              price: item.price ?? 0,
+              thumbnail:
+                item.thumbnail ||
+                item.image_url ||
+                item.image ||
+                'https://dummyimage.com/400x300/1f2937/ffffff&text=Product',
+            }));
+            break;
+          }
+        }
+
+        if (supabaseProducts && supabaseProducts.length) {
+          setProducts(supabaseProducts);
+          return;
+        }
+
         const response = await fetch('https://dummyjson.com/products?limit=1000'); 
         const data = await response.json(); 
         
-     
         setProducts(data.products); 
       } catch (error) {
         console.error('Xatolik:', error);
