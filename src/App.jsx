@@ -13,7 +13,7 @@ import NotFound from './pages/ErrorPage/NotFound'
 import SellerForm from './pages/Profile/SellerForm'
 import CardDetailModal from './pages/products/CardDetailModal'
 import Basket from './pages/Basket/Basket'
-
+import AddProduct from './pages/Profile/AddProduct'
 function App() {
   
   const router = createBrowserRouter([
@@ -36,6 +36,7 @@ function App() {
     {path:"/forgot-password", element: <ForgotPassword />},
     {path:"/update-password", element: <UpdatePassword />},
     {path:"product/:id", element: <CardDetailModal/>},
+    {path: "profile/add-product", element: <AddProduct/>}
     
   ])
 
