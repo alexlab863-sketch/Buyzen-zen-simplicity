@@ -14,19 +14,19 @@ const MyCarousel = () => {
   const slides = [
     {
       id: 1,
-      image: "https://c4.wallpaperflare.com/wallpaper/264/666/478/3-316-16-9-aspect-ratio-s-sfw-wallpaper-preview.jpg",
-      title: "Sizning Birinchi Slaydingiz",
-      description: "Zamonaviy dizayn va yuqori sifat"
+      image: "https://wallpaperaccess.com/full/1131083.jpg",
+      title: "Bizda hamma narsa topliadi",
+      description: ""
     },
     {
       id: 2,
-      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhUVIod9IAKohXLG6TnxyHwt3VDoyeripSPg&s",
-      title: "Ikkinchi Maxsus Taklif",
+      image: "",
+      title: "Har Juma kuni optom narxlar!",
       description: "Faqat bizda eng yaxshi narxlar"
     },
     {
       id: 3,
-      image: "https://c4.wallpaperflare.com/wallpaper/266/880/964/3-316-16-9-aspect-ratio-s-sfw-wallpaper-preview.jpg",
+      image: "",
       title: "Yangi To'plam",
       description: "O'z uslubingizni biz bilan toping"
     }
