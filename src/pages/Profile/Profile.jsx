@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../../supabaseClient';
-import { adaptiveUpsert, isMissingSchemaError, isRlsError } from '../../utils/supabaseAdaptive';
+import { adaptiveUpsert, isMissingSchemaError, isRlsError } from '../../utils/utils/supabaseAdaptive';
 import './Profile.css';
 
 const EMPTY_FORM = {
@@ -243,6 +243,7 @@ export default function Profile() {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
+    localStorage.clear();
     navigate('/login');
   };
 

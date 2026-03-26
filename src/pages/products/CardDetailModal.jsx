@@ -105,8 +105,11 @@ export default function CardDetailModal() {
   if (!product) return <div className="detail-error">Mahsulot topilmadi 😕</div>;
 
   return (
+  
     <div className="product-detail-container">
-      {/* Chap tomon: Vizual */}
+      <button className="back-btn" onClick={() => navigate(-1)}>
+        <span className="back-icon">←</span> ORQAGA
+      </button>
       <div className="product-detail-visual">
         {/* --- YANGI: Chegirma nishoni (Styled) --- */}
         {product.discountPercentage && (
@@ -184,7 +187,7 @@ export default function CardDetailModal() {
           <div className="product-detail-meta-item"><b>Zaxirada:</b> {product.stock} dona</div>
         </div>
 
-        {/* --- YANGI: Aqlli Toggle Tugmasi (Class'lar dinamik) --- */}
+        
         <button 
           className={`product-detail-buy-btn ${isInCart ? 'added-to-cart' : ''} ${cartLoading ? 'loading' : ''}`} 
           onClick={() => handleCartToggle(product)}

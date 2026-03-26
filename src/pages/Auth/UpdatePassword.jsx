@@ -37,6 +37,9 @@ export default function UpdatePassword() {
 
     return (
         <div className="auth-page-wrapper">
+            <button className="back-btn" onClick={() => navigate(-1)}>
+        <span className="back-icon">←</span> ORQAGA
+      </button>
             <div className="auth-logo-section">
                 <div className="logo" style={{fontSize: '2.5rem', fontWeight: 'bold', color: '#1a73e8'}}>Buyzen</div>
                 <p className="slogan">Shop Smart, Live Easy.</p>
