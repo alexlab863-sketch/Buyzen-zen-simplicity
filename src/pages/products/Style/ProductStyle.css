@@ -375,3 +375,575 @@
     font-size: 12px;
   }
 }
+
+.card-actions {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+}
+
+.detail-btn {
+  flex: 2;
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.basket-btn {
+  flex: 1;
+  background-color: #007bff;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+/* Savatga qo'shilgandagi holati */
+.basket-btn.added {
+  background-color: #28a745; /* Yashil rang */
+  border-color: #28a745;
+}
+
+.basket-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Savat va Batafsil tugmalari uchun konteyner */
+.card-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 15px;
+  margin-top: auto;
+}
+
+.card-btn {
+  padding: 10px 5px;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.detail-btn {
+  background: var(--surface-strong);
+  color: var(--text-color);
+}
+
+.basket-btn {
+  background: rgba(56, 189, 248, 0.1);
+  color: #38bdf8;
+  border-color: rgba(56, 189, 248, 0.2);
+}
+
+.basket-btn.added {
+  background: #22c55e;
+  color: white;
+  border-color: #22c55e;
+}
+
+.basket-btn:hover:not(.added) {
+  background: #38bdf8;
+  color: white;
+}
+
+/* --- Asosiy Modal Overlay --- */
+.product-detail-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+/* --- Modal Oynasi --- */
+.product-detail-modal {
+  background: #111827; /* To'q fon, sening sayting uslubida */
+  color: white;
+  width: 100%;
+  max-width: 1000px;
+  height: 85vh;
+  border-radius: 28px;
+  position: relative;
+  overflow: hidden; /* Ichki scrolling uchun */
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* --- Yopish Tugmasi --- */
+.close-modal-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 100;
+  transition: 0.3s;
+}
+
+.close-modal-btn:hover {
+  background: #ef4444;
+  transform: rotate(90deg);
+}
+
+/* --- Grid Layout (Rasm chapda, matn o'ngda) --- */
+.product-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: 100%;
+  overflow-y: auto; /* Agar matn sig'masa scroll bo'ladi */
+}
+
+/* --- Rasm Turgan Joy --- */
+.gallery-side {
+  background: #f3f4f6; /* Rasmlar oq fonda yaxshi ko'rinadi */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.gallery-side img {
+  width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+}
+
+/* --- Ma'lumotlar Turgan Joy --- */
+.info-side {
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: #111827;
+}
+
+.info-side h1 {
+  font-size: 2rem;
+  margin: 0;
+  color: #38bdf8;
+}
+
+.info-side .price {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #22c55e;
+}
+
+.info-side .description {
+  color: #9ca3af;
+  line-height: 1.6;
+}
+
+/* --- Meta Ma'lumotlar --- */
+.meta {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 20px;
+  border-radius: 16px;
+  font-size: 0.9rem;
+}
+
+.meta p {
+  margin: 8px 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.meta b {
+  color: #38bdf8;
+}
+
+/* --- Savatga Qo'shish Tugmasi --- */
+.detail-action-btn {
+  margin-top: auto;
+  padding: 16px;
+  border-radius: 14px;
+  border: none;
+  background: #38bdf8;
+  color: #000;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.detail-action-btn:hover {
+  background: #0ea5e9;
+  transform: translateY(-2px);
+}
+
+.detail-action-btn.added {
+  background: #ef4444;
+  color: white;
+}
+
+/* --- Mobil Versiya --- */
+@media (max-width: 768px) {
+  .product-detail-grid {
+    grid-template-columns: 1fr;
+  }
+  .product-detail-modal {
+    height: 95vh;
+  }
+  .gallery-side {
+    height: 300px;
+  }
+}
+
+.products-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 30px;
+  max-width: 1300px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+/* Sidebar */
+.filter-sidebar {
+  background: #111827;
+  padding: 25px;
+  border-radius: 20px;
+  height: fit-content;
+  position: sticky;
+  top: 100px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.filter-group {
+  margin-bottom: 25px;
+}
+
+.filter-group h4 {
+  color: #f3f4f6;
+  margin-bottom: 15px;
+  font-size: 1rem;
+}
+
+.filter-input, .filter-select {
+  width: 100%;
+  background: #1f2937;
+  border: 1px solid #374151;
+  padding: 10px;
+  border-radius: 8px;
+  color: white;
+}
+
+.category-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.category-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  color: #9ca3af;
+  transition: 0.2s;
+}
+
+.category-item:hover {
+  color: #38bdf8;
+}
+
+.price-inputs {
+  display: flex;
+  gap: 10px;
+}
+
+.price-inputs input {
+  width: 50%;
+  background: #1f2937;
+  border: 1px solid #374151;
+  padding: 8px;
+  border-radius: 8px;
+  color: white;
+  font-size: 0.8rem;
+}
+
+.reset-filter {
+  width: 100%;
+  padding: 12px;
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+/* Main */
+.results-count {
+  margin-bottom: 20px;
+  color: #9ca3af;
+  font-size: 0.9rem;
+}
+
+.pagination-wrapper {
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+}
+
+/* Mobile responsive */
+@media (max-width: 900px) {
+  .products-layout {
+    grid-template-columns: 1fr;
+  }
+  .filter-sidebar {
+    position: relative;
+    top: 0;
+  }
+}
+
+/* Products.css fayliga qo'shib qo'y */
+
+.products-layout.no-sidebar {
+  display: block; /* Grid-dan voz kechib, to'liq kenglikni olamiz */
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.products-layout.no-sidebar .products-main {
+  width: 100%;
+}
+
+/* HomePage uchun maxsus stil kerak bo'lsa */
+.home-page .products-layout {
+  padding-top: 0;
+}
+
+/* Asosiy konteyner */
+.products-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr; /* Sidebar borligida */
+  gap: 30px;
+  max-width: 1400px;
+  margin: 40px auto;
+  padding: 0 20px;
+  align-items: start;
+}
+
+/* Sidebar yo'q bo'lganda (Home sahifasida) */
+.products-layout.no-sidebar {
+  display: block; /* Grid-ni bekor qilamiz */
+  width: 100%;
+}
+
+.products-layout.no-sidebar .products-main {
+  width: 100%;
+}
+
+/* Card-lar joylashgan qism (Products.jsx ichidagi main) */
+.products-main {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Eng muhimi: Card.jsx ichidagi grid-ni boshqarish */
+/* Agar Card.jsx ichidagi klass boshqacha bo'lsa, o'shanga mosla */
+.product-grid { 
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  width: 100%;
+}
+
+/* Mobil holat uchun */
+@media (max-width: 900px) {
+  .products-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Products.jsx dagi asosiy o'rab turuvchi div */
+.products-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 30px;
+  max-width: 1400px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+/* Home sahifasida sidebar yo'q bo'lganda */
+.products-layout.no-sidebar {
+  display: block; 
+  width: 100%;
+}
+
+.products-layout.no-sidebar .products-main {
+  width: 100%;
+}
+
+/* Card ichidagi mahsulotlar setkasi */
+/* Card.jsx dagi eng tashqi div klassi products-container bo'lsa: */
+.products-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 25px;
+  width: 100%;
+}
+
+/* Sidebar stillari */
+.filter-sidebar {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(10px);
+  padding: 24px;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  height: sticky;
+  top: 20px;
+}
+
+.comments-section { margin-top: 30px; padding: 20px; }
+.comment-form textarea { width: 100%; height: 80px; padding: 10px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #ddd; }
+.comment-form button { background: #1a73e8; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
+.comment-item { border-bottom: 1px solid #eee; padding: 15px 0; }
+.comment-header { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.9rem; color: #555; }
+
+/* 1. Modal overlay - orqa fonni qoraytirish (shaffof) */
+.product-detail-overlay {
+  background: rgba(0, 0, 0, 0.7) !important; /* To'liq qora emas, shaffof */
+  backdrop-filter: blur(10px);
+  padding: 0; /* To'liq ekran egallashi uchun */
+}
+
+/* 2. Modal konteyneri - oq fonni olib tashlaymiz yoki moslashtiramiz */
+.product-detail-modal {
+  background: #111827 !important; /* Sening asosiy qora foning (surface color) */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  max-height: 95vh; /* Ekrandan chiqib ketmasligi uchun */
+  overflow-y: initial !important; /* Ichki skrollni o'chirish */
+  width: 90%;
+  max-width: 1200px;
+  color: #fff !important; /* Matnlar oq bo'lishi uchun */
+}
+
+/* 3. Grid qismi - rasm va ma'lumotni to'g'ri joylash */
+.product-detail-grid {
+  display: flex; /* Grid o'rniga Flex qilsak boshqarish osonroq */
+  flex-wrap: wrap; 
+  gap: 30px;
+  padding: 20px;
+}
+
+/* 4. Rasm joyi (Sen aytgan o'sha skroll bo'lib qolgan qism) */
+.gallery-side {
+  flex: 1;
+  min-width: 300px;
+  height: 500px; /* Balandlikni chegaralaymiz */
+  background: transparent !important; /* Fon bo'lmasin */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gallery-side img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain; /* Rasm o'z formasini saqlasin */
+  border-radius: 15px;
+}
+
+/* 5. Ma'lumotlar tomoni */
+.info-side {
+  flex: 1;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* 6. Kommentariya qismini pastga tushirish (butun modal skroll bo'lishi uchun) */
+.comments-section {
+  width: 100%;
+  padding: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+/* 1. Modal konteyneri - Balandlikni ekranga moslaymiz */
+.product-detail-modal {
+  background: #111827 !important; 
+  width: 95%;
+  max-width: 1100px;
+  max-height: 90vh; /* Ekran balandligining 90% idan oshmaydi */
+  display: flex;
+  flex-direction: column;
+  border-radius: 24px;
+  overflow: hidden; /* Modalning o'zi skroll bo'lmasligi kerak */
+  position: relative;
+}
+
+/* 2. Grid - Asosiy qismlarni sig'dirish */
+.product-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr; /* Rasm va Ma'lumot */
+  gap: 20px;
+  padding: 30px;
+  flex: 1;
+  overflow-y: auto; /* FAQAT ma'lumotlar ko'p bo'lsa, shu yerda skroll bo'lsin */
+}
+
+/* 3. Rasm bo'limi - MUAMMO SHU YERDA EDI */
+.gallery-side {
+  width: 100%;
+  height: 400px; /* Aniq balandlik beramiz */
+  position: sticky; /* Rasm joyida tursin */
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 16px;
+}
+
+.gallery-side img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain; /* Rasmni asliga qarab sig'diradi, cho'zmaydi */
+}
+
+/* 4. Ma'lumotlar bo'limi */
+.info-side {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* 5. Kommentariya - Agar modal sig'masa, pastda qoladi */
+.comments-section {
+  padding: 20px 30px;
+  background: rgba(0, 0, 0, 0.2);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Mobil uchun */
+@media (max-width: 768px) {
+  .product-detail-grid {
+    grid-template-columns: 1fr;
+    overflow-y: auto;
+  }
+  .gallery-side {
+    height: 250px;
+    position: relative;
+  }
+}

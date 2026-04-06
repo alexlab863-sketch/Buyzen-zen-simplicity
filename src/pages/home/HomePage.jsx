@@ -6,7 +6,7 @@ export default function HomePage() {
         <div className="home-page">
            <MyCarousel/>
            <h2>Bizda mavjud bo'lgan mahsulotlar</h2>
-         <Products/>
+         <Products showFilters={false}/>
         </div>
         
     );

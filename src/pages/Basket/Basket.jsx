@@ -1,149 +1,135 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { supabase } from '../../supabaseClient';
 import "./Style/Basket.css";
 
 const Basket = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const basketRef = useRef([]); 
 
   useEffect(() => {
-    const fetchCart = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        setLoading(false);
-        return;
-      }
-
-      const { data: sbItems } = await supabase
-        .from('cart_items')
-        .select('*')
-        .eq('user_id', user.id);
-
-      if (sbItems && sbItems.length > 0) {
-        const productPromises = sbItems.map(item => 
-          fetch(`https://dummyjson.com/products/${item.product_id}`).then(res => res.json())
-        );
-        const products = await Promise.all(productPromises);
-        
-        const mergedData = products.map((p, index) => {
-          const sbItem = sbItems.find(si => si.product_id === p.id);
-          return {
-            ...p,
-            quantity: sbItem ? sbItem.quantity : 1,
-            is_local: sbItem ? sbItem.is_local : false
-          };
-        });
-
-        setCartItems(mergedData);
-        basketRef.current = mergedData; 
-      }
-      setLoading(false);
-    };
-
     fetchCart();
-
-    // Sahifadan chiqayotganda avtomatik saqlash
-    return () => {
-      if (basketRef.current.length > 0) {
-        syncWithSupabase(basketRef.current);
-      }
-    };
   }, []);
 
-  const syncWithSupabase = async (currentItems) => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user || currentItems.length === 0) return;
+  const fetchCart = async () => {
+    setLoading(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
 
-    const updates = currentItems.map(item => ({
-      user_id: user.id,
-      product_id: item.id,
-      quantity: item.quantity,
-      is_local: item.is_local
-    }));
+      const { data, error } = await supabase
+        .from('cart_items')
+        .select(`
+          id,
+          quantity,
+          product_id,
+          products (id, name, price, image_url)
+        `)
+        .eq('user_id', user.id);
 
-    await supabase.from('cart_items').upsert(updates, { onConflict: 'user_id, product_id' });
-  };
+      if (error) throw error;
 
-  const updateQty = (id, delta) => {
-    const updated = cartItems.map(item => {
-      if (item.id === id) {
-        const newQty = Math.max(1, item.quantity + delta);
-        return { ...item, quantity: newQty };
-      }
-      return item;
-    });
-    setCartItems(updated);
-    basketRef.current = updated;
-  };
+      const formattedData = data.map(item => ({
+        cart_id: item.id,
+        id: item.product_id,
+        name: item.products?.name || "Noma'lum mahsulot",
+        price: item.products?.price || 0,
+        image_url: item.products?.image_url || "",
+        quantity: item.quantity
+      }));
 
-  const removeItem = async (productId) => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-
-    await supabase
-      .from('cart_items')
-      .delete()
-      .eq('user_id', user.id)
-      .eq('product_id', productId);
-
-    const updated = cartItems.filter(item => item.id !== productId);
-    setCartItems(updated);
-    basketRef.current = updated;
-  };
-
-  const orderItem = async (item) => {
-    const confirmOrder = window.confirm(`"${item.title}" uchun buyurtma berishni tasdiqlaysizmi?`);
-    if (confirmOrder) {
-      await removeItem(item.id);
-      alert("Buyurtma qabul qilindi!");
+      setCartItems(formattedData);
+    } catch (error) {
+      console.error("Basket fetch error:", error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (loading) return <div className="loader">YUKLANMOQDA...</div>;
+  const updateQty = async (cartId, delta) => {
+    const item = cartItems.find(i => i.cart_id === cartId);
+    const newQty = item.quantity + delta;
+    if (newQty < 1) return;
+
+    const { error } = await supabase
+      .from('cart_items')
+      .update({ quantity: newQty })
+      .eq('id', cartId);
+
+    if (!error) {
+      setCartItems(prev => prev.map(i => i.cart_id === cartId ? { ...i, quantity: newQty } : i));
+    }
+  };
+
+  const removeItem = async (cartId) => {
+    const { error } = await supabase.from('cart_items').delete().eq('id', cartId);
+    if (!error) {
+      setCartItems(prev => prev.filter(i => i.cart_id !== cartId));
+    }
+  };
+
+  // Umumiy hisobni chiqarish
+  const totalSum = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+
+  if (loading) return <div class="textWrapper" style={{margin: "auto"}}>
+  <p class="text">Loading...</p>
+  <div class="invertbox"></div>
+</div>;
 
   return (
     <div className="basket-container">
-      <h2 className="basket-title">Sening Savatchang</h2>
+      <h2 className="basket-title">Savatchangiz</h2>
       
       {cartItems.length > 0 ? (
-        <div className="basket-grid">
-          {cartItems.map(item => (
-            <div key={item.id} className="basket-card">
-              <div className="card-image">
-                <img src={item.thumbnail} alt={item.title} />
-              </div>
-              
-              <div className="card-info">
-                <h4>{item.title}</h4>
-                <p className="price">${item.price}</p>
-              </div>
-
-              <div className="card-controls">
-                <div className="control-row">
-                  <div className="counter">
-                    <button onClick={() => updateQty(item.id, -1)}>-</button>
-                    <span>{item.quantity}</span>
-                    <button onClick={() => updateQty(item.id, 1)}>+</button>
-                  </div>
-                  
-                  <button className="remove-btn" onClick={() => removeItem(item.id)}>
-                    &times;
-                  </button>
+        <>
+          <div className="basket-grid">
+            {cartItems.map(item => (
+              <div key={item.cart_id} className="basket-card">
+                <div className="card-image">
+                  <img src={item.image_url} alt={item.name} />
                 </div>
                 
-                <p className="item-total">Jami: <span>${(item.price * item.quantity).toFixed(2)}</span></p>
-                
-                <button className="card-order-btn" onClick={() => orderItem(item)}>
-                  BUYURTMA BERISH
-                </button>
+                <div className="card-info">
+                  <h4>{item.name}</h4>
+                  <p className="price">{item.price?.toLocaleString()} so'm</p>
+                </div>
+
+                <div className="card-controls">
+                  <div className="control-row">
+                    <div className="counter">
+                      <button onClick={() => updateQty(item.cart_id, -1)}>-</button>
+                      <span>{item.quantity}</span>
+                      <button onClick={() => updateQty(item.cart_id, 1)}>+</button>
+                    </div>
+                    <button className="remove-btn" onClick={() => removeItem(item.cart_id)}>&times;</button>
+                  </div>
+                  
+                  <p className="item-total">Jami: <span>{(item.price * item.quantity).toLocaleString()} so'm</span></p>
+                  
+                  {/* ALOHIDA BUYURTMA BERISH TUGMASI (KARD ICHIDA) */}
+                  <button className="card-order-btn" onClick={() => alert(`${item.name} uchun buyurtma qabul qilindi!`)}>
+                    FAQAT SHUNI SOTIB OLISH
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+
+          {/* UMUMIY BUYURTMA BERISH QISMI (PASTDA) */}
+          <div className="basket-summary-fixed">
+             <div className="summary-content">
+                <div className="total-info">
+                   <span>Umumiy mahsulotlar: {cartItems.length} ta</span>
+                   <h3>Jami: {totalSum.toLocaleString()} so'm</h3>
+                </div>
+                <button className="main-checkout-btn" onClick={() => alert("Barcha mahsulotlar uchun buyurtma berildi!")}>
+                   HAMMASINI SOTIB OLISH
+                </button>
+             </div>
+          </div>
+        </>
       ) : (
         <div className="empty-cart">
-          <p className="empty-msg">Savatchangiz hozircha bo'sh.</p>
+          <p className="empty-msg">Savatchangiz bo'sh.</p>
         </div>
       )}
     </div>

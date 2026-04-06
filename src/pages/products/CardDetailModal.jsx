@@ -1,29 +1,43 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination, Autoplay } from 'swiper/modules';
+import { Navigation, Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import { supabase } from "../../supabaseClient";
+import "./Style/ProductStyle.css"; // Modal uchun alohida CSS fayli (tavsiya etiladi)
 
 export default function CardDetailModal() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isInCart, setIsInCart] = useState(false); // --- YANGI STATE: Savatda bormi? ---
-  const [cartLoading, setCartLoading] = useState(false); // Tugma uchun yuklanish
+  const [isInCart, setIsInCart] = useState(false);
+  const [cartLoading, setCartLoading] = useState(false);
+  
+  // Kommentariya uchun state-lar
+  const [comments, setComments] = useState([]);
+  const [newComment, setNewComment] = useState("");
+  const [commentSubmitting, setCommentSubmitting] = useState(false);
+  
   const navigate = useNavigate();
 
+  // 1. Mahsulot, Savat va Kommentariyalarni yuklash
   useEffect(() => {
-    const getProductData = async () => {
+    const fetchAllData = async () => {
       try {
-        // 1. Mahsulot ma'lumotlarini DummyJSON'dan olish
-        const response = await fetch(`https://dummyjson.com/products/${id}`);
-        const data = await response.json();
+        setLoading(true);
+        // a. Mahsulot ma'lumotlarini olish
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .eq('id', id)
+          .single();
+
+        if (error) throw error;
         setProduct(data);
 
-        // 2. --- YANGI: Savatda bor-yo'qligini tekshirish ---
+        // b. Savatda bor-yo'qligini tekshirish
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
           const { data: cartItem } = await supabase
@@ -31,170 +45,188 @@ export default function CardDetailModal() {
             .select('*')
             .eq('user_id', user.id)
             .eq('product_id', id)
-            .single(); // Bitta elementni qaytaradi
-
-          if (cartItem) {
-            setIsInCart(true); // Savatda bor bo'lsa, holatni true qilamiz
-          }
+            .single();
+          
+          if (cartItem) setIsInCart(true);
         }
+
+        // c. Kommentariyalarni yuklash
+        await fetchComments();
+
       } catch (err) {
-        console.log("Xato ketdi:", err);
+        console.error("Xatolik:", err.message);
       } finally {
         setLoading(false);
       }
     };
-    getProductData();
+
+    if (id) fetchAllData();
   }, [id]);
 
-  // --- YANGI: Aqlli Toggle Funksiyasi (Qo'shish / O'chirish) ---
-  const handleCartToggle = async (product) => {
-    const { data: { user } } = await supabase.auth.getUser();
-  
-    if (!user) {
-      alert("Avval tizimga kiring, bro! 🔥");
-      return;
-    }
+  // 2. Kommentariyalarni yuklash funksiyasi (insert-dan keyin chaqirish uchun alohida)
+  const fetchComments = async () => {
+    const { data, error } = await supabase
+      .from('comments')
+      .select('*')
+      .eq('product_id', id)
+      .order('created_at', { ascending: false });
 
-    setCartLoading(true); // Tugmani bloklab turish
+    if (!error) setComments(data);
+  };
 
-    if (isInCart) {
-      // --- 1-holat: Savatda bor, o'chirish kerak ---
-      const { error } = await supabase
-        .from('cart_items')
-        .delete()
-        .eq('user_id', user.id)
-        .eq('product_id', product.id);
-
-      if (error) {
-        console.error("O'chirishda xato:", error);
-      } else {
-        setIsInCart(false); // Local state'ni yangilash
-        // console.log("Savatdan o'chirildi"); // UX uchun alert o'rniga console
+  // 3. Savatga qo'shish/o'chirish mantiqi (Detail Page-da toggle bo'lgani ma'qul)
+  const handleCartToggle = async () => {
+    setCartLoading(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        alert("Savatdan foydalanish uchun tizimga kiring!");
+        return;
       }
-    } else {
-      // --- 2-holat: Savatda yo'q, qo'shish kerak ---
-      const { error } = await supabase
-        .from('cart_items')
-        .upsert({ 
-          user_id: user.id, 
-          product_id: product.id, 
-          quantity: 1, 
-          is_local: false 
-        }, { onConflict: 'user_id, product_id' });
-  
-      if (error) {
-        console.error("Qo'shishda xato:", error);
+
+      if (isInCart) {
+        // Savatdan o'chirish
+        await supabase
+          .from('cart_items')
+          .delete()
+          .eq('user_id', user.id)
+          .eq('product_id', id);
+        setIsInCart(false);
       } else {
-        setIsInCart(true); // Local state'ni yangilash
-        // console.log("Savatga qo'shildi"); // UX uchun alert o'rniga console
+        // Savatga qo'shish
+        await supabase
+          .from('cart_items')
+          .insert([{ user_id: user.id, product_id: id, quantity: 1 }]);
+        setIsInCart(true);
       }
+    } catch (error) {
+      console.error("Cart error:", error.message);
+    } finally {
+      setCartLoading(false);
     }
+  };
 
-    setCartLoading(false); // Tugmani ochish
-  }
+  // 4. Kommentariya yuborish funksiyasi
+  const handleSendComment = async (e) => {
+    e.preventDefault();
+    if (!newComment.trim() || commentSubmitting) return;
 
-  if (loading) {
-    return (
-      <div className="detail-loader-container">
-        <div className="neon-spinner"></div>
-        <p>YUKLANMOQDA...</p>
-      </div>
-    );
-  }
+    setCommentSubmitting(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        alert("Izoh qoldirish uchun tizimga kiring!");
+        return;
+      }
 
-  if (!product) return <div className="detail-error">Mahsulot topilmadi 😕</div>;
+      const { error } = await supabase
+        .from('comments')
+        .insert([{
+          product_id: id,
+          user_id: user.id,
+          user_name: user.user_metadata.full_name || "Mijoz",
+          content: newComment.trim()
+        }]);
+
+      if (error) throw error;
+      
+      setNewComment("");
+      await fetchComments(); // Ro'yxatni yangilash
+    } catch (err) {
+      alert("Izoh yuborishda xatolik: " + err.message);
+    } finally {
+      setCommentSubmitting(false);
+    }
+  };
+
+  if (loading) return (
+    <div className="textWrapper" style={{margin: "auto"}}>
+      <p className="text">Loading...</p>
+      <div className="invertbox"></div>
+    </div>
+  );
+
+  if (!product) return <div className="error">Mahsulot topilmadi!</div>;
+
+  // Rasmlar galereyasini tayyorlash (agar gallery yo'q bo'lsa, asosiy rasm ishlatiladi)
+  const images = product.content?.gallery || [product.image_url];
 
   return (
-  
-    <div className="product-detail-container">
-      <button className="back-btn" onClick={() => navigate(-1)}>
-        <span className="back-icon">←</span> ORQAGA
-      </button>
-      <div className="product-detail-visual">
-        {/* --- YANGI: Chegirma nishoni (Styled) --- */}
-        {product.discountPercentage && (
-          <div className="product-detail-discount-badge">
-            -{Math.round(product.discountPercentage)}% OFF
-          </div>
-        )}
-
-        <Swiper
-          modules={[Navigation, Pagination, Autoplay]}
-          navigation
-          pagination={{ clickable: true }}
-          autoplay={{ delay: 3500 }}
-          style={{
-            "--swiper-navigation-color": "var(--accent-color)",
-            "--swiper-pagination-color": "var(--accent-color)",
-          }}
-          className="product-detail-swiper" 
-        >
-          {product.images?.map((url, index) => (
-            <SwiperSlide key={index} className="product-detail-slide">
-              <img src={url} alt={product.title} />
-            </SwiperSlide>
-          ))}
-        </Swiper>
-      </div>
-
-      {/* O'ng tomon: Info */}
-      <div className="product-detail-info">
-        <div className="product-detail-top-meta">
-          <span className="product-detail-category">{product.category}</span>
-          <span className="product-detail-sku">SKU: {product.sku}</span>
-        </div>
-
-        <h1 className="product-detail-title">{product.title}</h1>
+    <div className="product-detail-overlay">
+      <div className="product-detail-modal">
+        <button className="close-modal-btn" onClick={() => navigate(-1)}>✕</button>
         
-        <div className="product-detail-rating-row">
-          <div className="product-detail-rating">⭐ {product.rating}</div>
-          <span className="product-detail-reviews-count">({product.reviews?.length} sharhlar)</span>
+        <div className="product-detail-grid">
+          {/* Swiper Karuseli ishlatilgan joy */}
+          <div className="gallery-side">
+            <Swiper
+              modules={[Navigation, Pagination]}
+              navigation={true}
+              pagination={{ clickable: true }}
+              className="detail-swiper"
+            >
+              {images.map((img, index) => (
+                <SwiperSlide key={index}>
+                  <img src={img} alt={`${product.name} ${index + 1}`} />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
+
+          <div className="info-side">
+            <h1>{product.name}</h1>
+            <p className="price">{product.price?.toLocaleString()} so'm</p>
+            <p className="description">{product.description}</p>
+            
+            <div className="meta">
+              <p><b>Brend:</b> {product.brand || "Mavjud emas"}</p>
+              <p><b>Kategoriya:</b> {product.category || "Umumiy"}</p>
+              <p><b>Holat:</b> {product.stock_count > 0 ? "Sotuvda bor" : "Tugagan"}</p>
+            </div>
+
+            <button 
+              className={`detail-action-btn ${isInCart ? 'added' : ''}`}
+              onClick={handleCartToggle}
+              disabled={cartLoading}
+            >
+              {cartLoading ? "..." : (isInCart ? "🛒 Savatdan o'chirish" : "🛒 Savatga qo'shish")}
+            </button>
+          </div>
         </div>
 
-        <div className="product-detail-price-box">
-          <div className="product-detail-main-price">
-            <span className="product-detail-price">${product.price}</span>
-            {product.discountPercentage && (
-              <span className="product-detail-old-price">
-                ${(product.price * (1 + product.discountPercentage / 100)).toFixed(2)}
-              </span>
+        {/* --- Kommentariyalar bo'limi --- */}
+        <div className="comments-section">
+          <hr />
+          <h3>Mijozlar fikri ({comments.length})</h3>
+
+          <form onSubmit={handleSendComment} className="comment-form">
+            <textarea 
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              placeholder="Fikringizni yozib qoldiring..."
+              required
+            />
+            <button type="submit" disabled={commentSubmitting}>
+              {commentSubmitting ? "..." : "Yuborish"}
+            </button>
+          </form>
+
+          <div className="comments-list">
+            {comments.length > 0 ? (
+              comments.map((c) => (
+                <div key={c.id} className="comment-item">
+                  <div className="comment-header">
+                    <strong>{c.user_name}</strong>
+                    <span>{new Date(c.created_at).toLocaleDateString()}</span>
+                  </div>
+                  <p>{c.content}</p>
+                </div>
+              ))
+            ) : (
+              <p className="no-comments">Hozircha izohlar yo'q. Birinchi bo'lib fikr bildiring!</p>
             )}
           </div>
-          <span className={`availability ${product.stock > 0 ? 'in-stock' : 'out-of-stock'}`}>
-            {product.availabilityStatus}
-          </span>
         </div>
-
-        <p className="product-detail-desc">{product.description}</p>
-
-        <div className="product-detail-perks">
-          <div className="perk-item">
-            <span className="perk-icon">🚚</span>
-            <span>{product.shippingInformation}</span>
-          </div>
-          <div className="perk-item">
-            <span className="perk-icon">🛡️</span>
-            <span>{product.warrantyInformation}</span>
-          </div>
-          <div className="perk-item return-policy">
-            <span className="perk-icon">🔄</span>
-            <span>{product.returnPolicy}</span>
-          </div>
-        </div>
-
-        <div className="product-detail-meta">
-          <div className="product-detail-meta-item"><b>Brend:</b> {product.brand || "Noma'lum"}</div>
-          <div className="product-detail-meta-item"><b>Zaxirada:</b> {product.stock} dona</div>
-        </div>
-
-        
-        <button 
-          className={`product-detail-buy-btn ${isInCart ? 'added-to-cart' : ''} ${cartLoading ? 'loading' : ''}`} 
-          onClick={() => handleCartToggle(product)}
-          disabled={cartLoading}
-        >
-          {cartLoading ? 'KUTING...' : (isInCart ? 'QO\'SHILDI (O\'CHIRISH)' : 'SAVATCHAGA QO\'SHISH')}
-        </button>
       </div>
     </div>
   );

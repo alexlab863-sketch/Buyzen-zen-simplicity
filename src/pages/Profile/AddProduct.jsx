@@ -10,33 +10,15 @@ const INITIAL_FORM = {
   price: '',
   stock_count: '',
   category: '',
-  image_url: '',
 };
 
 const CATEGORY_OPTIONS = [
-  'Elektronika',
-  'Telefonlar',
-  'Noutbuklar',
-  'Aksessuarlar',
-  'Maishiy texnika',
-  'Erkaklar kiyimi',
-  'Ayollar kiyimi',
-  'Bolalar kiyimi',
-  'Oyoq kiyim',
-  'Gozallik mahsulotlari',
-  'Salomatlik',
-  'Oziq-ovqat',
-  'Ichimliklar',
-  'Kitoblar',
-  'Sport jihozlari',
-  'Avto mahsulotlar',
-  'Uy jihozlari',
-  'Mebel',
-  'Oyinqchoqlar',
-  'Zargarlik buyumlari',
+  'Elektronika', 'Telefonlar', 'Noutbuklar', 'Aksessuarlar', 'Maishiy texnika',
+  'Erkaklar kiyimi', 'Ayollar kiyimi', 'Bolalar kiyimi', 'Oyoq kiyim',
+  'Gozallik mahsulotlari', 'Salomatlik', 'Oziq-ovqat', 'Ichimliklar',
+  'Kitoblar', 'Sport jihozlari', 'Avto mahsulotlar', 'Uy jihozlari',
+  'Mebel', 'Oyinqchoqlar', 'Zargarlik buyumlari',
 ];
-
-const PRODUCT_GALLERY_STORAGE_KEY = 'buyzen_product_galleries';
 
 export default function AddProduct() {
   const navigate = useNavigate();
@@ -45,67 +27,34 @@ export default function AddProduct() {
   const [submitting, setSubmitting] = useState(false);
   const [isSeller, setIsSeller] = useState(false);
   const [userId, setUserId] = useState('');
-  const [sellerId, setSellerId] = useState('');
   const [status, setStatus] = useState({ type: '', text: '' });
   const [form, setForm] = useState(INITIAL_FORM);
-  const [galleryImages, setGalleryImages] = useState([]);
+  
+  // Preview uchun Base64, yuklash uchun haqiqiy File obyektlari
+  const [galleryImages, setGalleryImages] = useState([]); 
+  const [imageFiles, setImageFiles] = useState([]);
 
   useEffect(() => {
     const loadUser = async () => {
       setLoading(true);
+      const { data: { session }, error } = await supabase.auth.getSession();
 
-      const {
-        data: { session },
-        error,
-      } = await supabase.auth.getSession();
-
-      if (error) {
-        setStatus({ type: 'error', text: error.message });
-        setLoading(false);
-        return;
-      }
-
-      const user = session?.user;
-      if (!user) {
+      if (error || !session?.user) {
         navigate('/login');
         return;
       }
 
+      const user = session.user;
       setUserId(user.id);
-      const metadata = user.user_metadata || {};
-      let sellerFlag = Boolean(metadata.is_seller || metadata.role === 'seller');
-      let resolvedSellerId = user.id;
 
-      if (!sellerFlag) {
-        const sellerSources = [
-          { table: 'sellers', key: 'user_id' },
-          { table: 'sellers', key: 'id' },
-        ];
+      // Seller ekanligini bazadan tekshirish
+      const { data: sellerData } = await supabase
+        .from('sellers')
+        .select('*')
+        .eq('id', user.id)
+        .maybeSingle();
 
-        for (const source of sellerSources) {
-          const { data, error: sellerError } = await supabase
-            .from(source.table)
-            .select('*')
-            .eq(source.key, user.id)
-            .maybeSingle();
-
-          if (sellerError) {
-            if (isMissingSchemaError(sellerError) || isRlsError(sellerError)) {
-              continue;
-            }
-            break;
-          }
-
-          if (data) {
-            sellerFlag = true;
-            resolvedSellerId = data.id || user.id;
-            break;
-          }
-        }
-      }
-
-      setIsSeller(sellerFlag);
-      setSellerId(resolvedSellerId);
+      setIsSeller(!!sellerData);
       setLoading(false);
     };
 
@@ -126,124 +75,101 @@ export default function AddProduct() {
 
     if (files.length !== 3) {
       setStatus({ type: 'error', text: 'Iltimos, aynan 3 ta rasm tanlang.' });
-      e.target.value = '';
       return;
     }
 
     const invalidFile = files.find((file) => !file.type.startsWith('image/'));
     if (invalidFile) {
-      setStatus({ type: 'error', text: 'Tanlangan fayllarning barchasi rasm bo‘lishi kerak.' });
-      e.target.value = '';
+      setStatus({ type: 'error', text: 'Faqat rasm fayllarini tanlang.' });
       return;
     }
 
-    const oversizedFile = files.find((file) => file.size > 2 * 1024 * 1024);
-    if (oversizedFile) {
-      setStatus({ type: 'error', text: "Har bir rasm 2 MB dan kichik bo'lishi kerak." });
-      e.target.value = '';
-      return;
-    }
+    setImageFiles(files); // Storage uchun fayllarni saqlash
 
+    // Preview (ekranda ko'rsatish) uchun
     Promise.all(
-      files.map(
-        (file) =>
-          new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(String(reader.result || ''));
-            reader.onerror = reject;
-            reader.readAsDataURL(file);
-          })
+      files.map((file) =>
+        new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(String(reader.result || ''));
+          reader.readAsDataURL(file);
+        })
       )
-    )
-      .then((images) => {
-        setGalleryImages(images);
-        setForm((prev) => ({ ...prev, image_url: images[0] || '' }));
-        setStatus({ type: 'success', text: '3 ta mahsulot rasmi tanlandi.' });
-      })
-      .catch(() => {
-        setStatus({ type: 'error', text: "Rasmlarni o'qishda xatolik yuz berdi." });
-      })
-      .finally(() => {
-        e.target.value = '';
-      });
+    ).then((previews) => {
+      setGalleryImages(previews);
+      setStatus({ type: 'success', text: '3 ta rasm yuklashga tayyor.' });
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!userId) return;
+    if (!userId || !isSeller || submitting) return;
 
-    if (!isSeller) {
-      setStatus({ type: 'error', text: "Faqat seller foydalanuvchi mahsulot qo'sha oladi." });
-      return;
-    }
+    const { name, description, category, price, stock_count } = form;
 
-    const name = form.name.trim();
-    const description = form.description.trim();
-    const category = form.category.trim();
-    const imageUrl = form.image_url.trim();
-    const price = Number(form.price);
-    const stockCount = Number(form.stock_count || 0);
-
-    if (!name || !description || !category || !imageUrl || Number.isNaN(price) || Number.isNaN(stockCount)) {
-      setStatus({
-        type: 'error',
-        text: "Iltimos, nom, tavsif, kategoriya, narx, soni va rasm maydonlarini to'ldiring.",
-      });
-      return;
-    }
-
-    if (galleryImages.length !== 3) {
-      setStatus({ type: 'error', text: 'Mahsulot uchun aynan 3 ta rasm tanlanishi kerak.' });
-      return;
-    }
-
-    if (price <= 0 || stockCount <= 0) {
-      setStatus({ type: 'error', text: "Narx va mahsulot soni 0 dan katta bo'lishi kerak." });
+    if (!name || !description || !category || imageFiles.length !== 3) {
+      setStatus({ type: 'error', text: "Barcha maydonlarni to'ldiring va 3 ta rasm yuklang." });
       return;
     }
 
     setSubmitting(true);
-    setStatus({ type: '', text: '' });
+    setStatus({ type: '', text: 'Yuklanmoqda...' });
 
-    const productId = crypto.randomUUID();
-    const row = {
-      id: productId,
-      seller_id: userId,
-      name,
-      description,
-      price,
-      image_url: imageUrl,
-      stock_count: stockCount,
-      category,
-      created_at: new Date().toISOString(),
-    };
+    try {
+      // 1. Rasmlarni Storage-ga yuklash
+      const uploadedUrls = await Promise.all(
+        imageFiles.map(async (file) => {
+          const fileExt = file.name.split('.').pop();
+          const fileName = `${crypto.randomUUID()}.${fileExt}`;
+          const filePath = `${userId}/${fileName}`;
 
-    const { error } = await supabase.from('products').insert(row);
+          const { error: uploadError } = await supabase.storage
+            .from('product-images')
+            .upload(filePath, file);
 
-    if (error) {
+          if (uploadError) throw uploadError;
+
+          const { data } = supabase.storage
+            .from('product-images')
+            .getPublicUrl(filePath);
+
+          return data.publicUrl;
+        })
+      );
+
+      // 2. Bazaga (Products) ma'lumotlarni yozish
+      const { error: insertError } = await supabase.from('products').insert([{
+        seller_id: userId,
+        name: name.trim(),
+        description: description.trim(),
+        price: Number(price),
+        stock_count: Number(stock_count),
+        category: category,
+        image_url: uploadedUrls[0], // Asosiy rasm
+        content: {
+          gallery: uploadedUrls,
+          created_at: new Date().toISOString()
+        }
+      }]);
+
+      if (insertError) throw insertError;
+
+      setStatus({ type: 'success', text: "Mahsulot muvaffaqiyatli qo'shildi!" });
+      setForm(INITIAL_FORM);
+      setGalleryImages([]);
+      setImageFiles([]);
+
+    } catch (err) {
+      setStatus({ type: 'error', text: err.message });
+    } finally {
       setSubmitting(false);
-      setStatus({
-        type: 'error',
-        text: isRlsError(error)
-          ? "Products jadvaliga yozishga ruxsat yo'q. Supabase RLS policy ni tekshiring."
-          : error.message,
-      });
-      return;
     }
-
-    const storedGalleries = JSON.parse(localStorage.getItem(PRODUCT_GALLERY_STORAGE_KEY) || '{}');
-    storedGalleries[productId] = galleryImages;
-    localStorage.setItem(PRODUCT_GALLERY_STORAGE_KEY, JSON.stringify(storedGalleries));
-
-    setSubmitting(false);
-    setForm(INITIAL_FORM);
-    setGalleryImages([]);
-    setStatus({ type: 'success', text: "Mahsulot muvaffaqiyatli qo'shildi." });
   };
 
-  if (loading) {
-    return <p className="loading">Sahifa yuklanmoqda...</p>;
-  }
+  if (loading) return <div class="textWrapper" style={{margin: "auto"}}>
+  <p class="text">Loading...</p>
+  <div class="invertbox"></div>
+</div>;
 
   return (
     <div className="profile-wrapper seller-page-wrapper">
@@ -252,15 +178,14 @@ export default function AddProduct() {
           <span className="seller-chip">Seller Product</span>
           <h1 className="seller-title">Yangi mahsulot qo&apos;shish</h1>
           <p className="seller-subtitle">
-            Mahsulot ma&apos;lumotlarini kiriting. Narx so&apos;mda saqlanadi va product alohida
-            `uuid` identifikator bilan yoziladi.
+            Mahsulot ma&apos;lumotlarini kiriting. Rasmlar bulutli xotiraga saqlanadi.
           </p>
         </article>
 
         <article className="seller-form-card">
           {!isSeller && (
             <p className="profile-status error">
-              Siz hozircha seller emassiz. Mahsulot qo&apos;shish uchun avval seller bo&apos;ling.
+              Siz hozircha seller emassiz.
             </p>
           )}
 
@@ -286,8 +211,6 @@ export default function AddProduct() {
 
             <input
               type="number"
-              min="1"
-              step="0.01"
               name="price"
               className="profile-input"
               placeholder="Narx (so'm)"
@@ -298,7 +221,6 @@ export default function AddProduct() {
 
             <input
               type="number"
-              min="1"
               name="stock_count"
               className="profile-input"
               placeholder="Soni (stock)"
@@ -315,10 +237,8 @@ export default function AddProduct() {
               required
             >
               <option value="">Kategoriyani tanlang</option>
-              {CATEGORY_OPTIONS.map((category) => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
+              {CATEGORY_OPTIONS.map((cat) => (
+                <option key={cat} value={cat}>{cat}</option>
               ))}
             </select>
 
@@ -329,6 +249,7 @@ export default function AddProduct() {
               multiple
               className="profile-file-input"
               onChange={handleImageSelect}
+              hidden
             />
 
             <button
@@ -345,7 +266,7 @@ export default function AddProduct() {
                   <div key={index} className="profile-product-preview">
                     <img
                       src={image}
-                      alt={`Mahsulot preview ${index + 1}`}
+                      alt={`Preview ${index + 1}`}
                       className="profile-product-preview-image"
                     />
                   </div>
@@ -362,9 +283,7 @@ export default function AddProduct() {
             </button>
           </form>
 
-          <Link to="/profile" className="seller-back-link">
-            Profilga qaytish
-          </Link>
+          <Link to="/profile" className="seller-back-link">Profilga qaytish</Link>
         </article>
       </section>
     </div>

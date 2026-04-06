@@ -151,3 +151,57 @@
   border: 1px solid var(--border-color);
   text-align: center;
 }
+
+/* Savatcha pastidagi umumiy blok */
+.basket-summary-fixed {
+  margin-top: 40px;
+  padding: 30px;
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  box-shadow: var(--shadow-strong);
+}
+
+.summary-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.total-info h3 {
+  font-size: 1.8rem;
+  color: var(--accent-color);
+  margin-top: 5px;
+}
+
+.main-checkout-btn {
+  padding: 16px 40px;
+  background: #22c55e; /* Yashil rang */
+  color: white;
+  border: none;
+  border-radius: 16px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 20px rgba(34, 197, 94, 0.2);
+}
+
+.main-checkout-btn:hover {
+  transform: translateY(-3px);
+  background: #16a34a;
+  box-shadow: 0 15px 25px rgba(34, 197, 94, 0.3);
+}
+
+/* Kichik ekranlar uchun */
+@media (max-width: 600px) {
+  .summary-content {
+    flex-direction: column;
+    text-align: center;
+  }
+  .main-checkout-btn {
+    width: 100%;
+  }
+}
