@@ -1,110 +1,170 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Card from './Card';
 import ReactPaginate from 'react-paginate'; 
 import { supabase } from '../../supabaseClient';
-import { isMissingSchemaError, isRlsError } from '../../utils/supabaseAdaptive';
-
 
 const Paginate = ReactPaginate.default ? ReactPaginate.default : ReactPaginate;
 
-function Products() {
+function Products({ showFilters = true }) { // Katta F bilan yozgan ma'qul
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('Barchasi');
+  const [priceRange, setPriceRange] = useState({ min: 0, max: 10000000 });
+  const [sortBy, setSortBy] = useState('newest');
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const productSources = ['products', 'seller_products', 'shop_products'];
-        let supabaseProducts = null;
+        setLoading(true);
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .order('created_at', { ascending: false });
 
-        for (const table of productSources) {
-          const { data, error } = await supabase.from(table).select('*').limit(1000);
-
-          if (error) {
-            if (isMissingSchemaError(error) || isRlsError(error)) {
-              continue;
-            }
-            console.error('Supabase xatolik:', error.message);
-            continue;
-          }
-
-          if (data?.length) {
-            supabaseProducts = data.map((item, index) => ({
-              id: item.id ?? item.product_id ?? `${table}-${index}`,
-              title: item.title ?? item.name ?? 'Nomsiz mahsulot',
-              brand: item.brand ?? item.store_name ?? item.seller_name ?? '',
-              price: item.price ?? 0,
-              thumbnail:
-                item.thumbnail ||
-                item.image_url ||
-                item.image ||
-                'https://dummyimage.com/400x300/1f2937/ffffff&text=Product',
-            }));
-            break;
-          }
-        }
-
-        if (supabaseProducts && supabaseProducts.length) {
-          setProducts(supabaseProducts);
-          return;
-        }
-
-        const response = await fetch('https://dummyjson.com/products?limit=1000'); 
-        const data = await response.json(); 
-        
-        setProducts(data.products); 
+        if (error) throw error;
+        setProducts(data || []);
       } catch (error) {
-        console.error('Xatolik:', error);
+        console.error('Supabase xatolik:', error.message);
+      } finally {
+        setLoading(false);
       }
     };
     fetchProducts();
   }, []);
 
+  const categories = useMemo(() => {
+    const unique = [...new Set(products.map(p => p.category))].filter(Boolean);
+    return ['Barchasi', ...unique];
+  }, [products]);
+
+  const filteredProducts = useMemo(() => {
+    return products
+      .filter(p => {
+        const matchesCategory = selectedCategory === 'Barchasi' || p.category === selectedCategory;
+        const matchesSearch = (p.name || '').toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesPrice = (p.price || 0) >= priceRange.min && (p.price || 0) <= priceRange.max;
+        return matchesCategory && matchesSearch && matchesPrice;
+      })
+      .sort((a, b) => {
+        if (sortBy === 'cheap') return a.price - b.price;
+        if (sortBy === 'expensive') return b.price - a.price;
+        return new Date(b.created_at) - new Date(a.created_at);
+      });
+  }, [products, searchTerm, selectedCategory, priceRange, sortBy]);
 
   const [itemOffset, setItemOffset] = useState(0);
-  const itemsPerPage = 10;
-  
-  const endOffset = itemOffset + itemsPerPage;
-
-  const currentItems = products.slice(itemOffset, endOffset);
-  const pageCount = Math.ceil(products.length / itemsPerPage);
+  const itemsPerPage = 8;
+  const currentItems = filteredProducts.slice(itemOffset, itemOffset + itemsPerPage);
+  const pageCount = Math.ceil(filteredProducts.length / itemsPerPage);
 
   const handlePageClick = (event) => {
-    const newOffset = (event.selected * itemsPerPage) % products.length;
+    const newOffset = (event.selected * itemsPerPage) % filteredProducts.length;
     setItemOffset(newOffset);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  return (
-    <div className="products-container">
-      {products.length === 0 ? (
-        <div className="loading">Mahsulotlar yuklanmoqda...</div>
-      ) : (
-        <>
-       {}
-     
-          <Card products={currentItems} />
+  if (loading) return <div class="textWrapper" style={{margin: "auto"}}>
+  <p class="text">Loading...</p>
+  <div class="invertbox"></div>
+</div>;
 
-    
-          <Paginate
-            breakLabel="..."
-            nextLabel="keyingi >"
-            onPageChange={handlePageClick}
-            pageRangeDisplayed={3}
-            pageCount={pageCount}
-            previousLabel="< oldingi"
-            renderOnZeroPageCount={null}
-            
-            containerClassName="pagination"
-            pageClassName="page-item"
-            pageLinkClassName="page-link"
-            previousClassName="page-item"
-            previousLinkClassName="page-link"
-            nextClassName="page-item"
-            nextLinkClassName="page-link"
-            activeClassName="active"
-          />
-        </>
+  return (
+    // Agar showFilters false bo'lsa "no-sidebar" klassi qo'shiladi
+    <div className={`products-layout ${!showFilters ? 'no-sidebar' : ''}`}>
+      
+      {showFilters && (
+        <aside className="filter-sidebar">
+          <div className="filter-group">
+            <h4>Qidiruv</h4>
+            <input 
+              type="text" 
+              placeholder="Nomini yozing..." 
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="filter-input"
+            />
+          </div>
+
+          <div className="filter-group">
+            <h4>Kategoriya</h4>
+            <div className="category-list">
+              {categories.map(cat => (
+                <label key={cat} className="category-item">
+                  <input 
+                    type="radio" 
+                    name="category" 
+                    checked={selectedCategory === cat}
+                    onChange={() => {
+                      setSelectedCategory(cat);
+                      setItemOffset(0);
+                    }}
+                  />
+                  <span>{cat}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div className="filter-group">
+            <h4>Narx oralig'i</h4>
+            <div className="price-inputs">
+              <input 
+                type="number" 
+                value={priceRange.min}
+                onChange={(e) => setPriceRange({...priceRange, min: Number(e.target.value)})}
+              />
+              <input 
+                type="number" 
+                value={priceRange.max}
+                onChange={(e) => setPriceRange({...priceRange, max: Number(e.target.value)})}
+              />
+            </div>
+          </div>
+
+          <div className="filter-group">
+            <h4>Saralash</h4>
+            <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="filter-select">
+              <option value="newest">Yangi qo'shilganlar</option>
+              <option value="cheap">Arzonroq</option>
+              <option value="expensive">Qimmatroq</option>
+            </select>
+          </div>
+
+          <button className="reset-filter" onClick={() => {
+            setSelectedCategory('Barchasi');
+            setSearchTerm('');
+            setPriceRange({ min: 0, max: 10000000 });
+            setSortBy('newest');
+          }}>
+            Filtrni tozalash
+          </button>
+        </aside>
       )}
+
+      <main className="products-main">
+        {filteredProducts.length === 0 ? (
+          <div className="no-products">Hozircha mahsulot yo'q</div>
+        ) : (
+          <>
+            {/* Card o'zining gridiga ega bo'lishi kerak */}
+            <Card products={currentItems} />
+            
+            <div className="pagination-wrapper">
+              <Paginate
+                breakLabel="..."
+                nextLabel=">"
+                onPageChange={handlePageClick}
+                pageRangeDisplayed={3}
+                pageCount={pageCount}
+                previousLabel="<"
+                containerClassName="pagination"
+              />
+            </div>
+          </>
+        )}
+      </main>
     </div>
   );
 }

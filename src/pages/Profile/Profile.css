@@ -875,3 +875,345 @@
     width: 100%;
   }
 }
+
+
+/* --- Mahsulotlar paneli va ro'yxati --- */
+.seller-products-section {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid var(--profile-border);
+}
+
+.profile-products-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.profile-product-item {
+  background: var(--profile-surface-strong) !important;
+  border: 1px solid var(--profile-border) !important;
+  border-radius: 20px !important;
+  display: flex !important;
+  align-items: center;
+  padding: 12px !important;
+  transition: all 0.3s ease;
+}
+
+.profile-product-item:hover {
+  transform: translateY(-4px);
+  border-color: var(--profile-accent) !important;
+  box-shadow: 0 10px 25px rgba(56, 189, 248, 0.15);
+}
+
+.profile-product-item img {
+  border-radius: 12px;
+  object-fit: cover;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.profile-product-item span {
+  font-size: 0.95rem;
+  color: var(--profile-text);
+}
+
+/* --- Mahsulot Modali (Pop-up) --- */
+.profile-product-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(2, 8, 23, 0.85);
+  backdrop-filter: blur(12px);
+  display: grid;
+  place-items: center;
+  padding: 20px;
+}
+
+.profile-product-modal {
+  width: min(100%, 500px);
+  background: var(--profile-bg);
+  border: 1px solid var(--profile-border);
+  border-radius: 30px;
+  padding: 24px;
+  position: relative;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+  animation: modalSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalSlideUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* --- Modal Ichidagi Galereya --- */
+.modal-gallery {
+  position: relative;
+  width: 100%;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  aspect-ratio: 1/1;
+  background: #000;
+}
+
+.main-modal-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.gallery-nav {
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 8px 16px;
+  border-radius: 999px;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.gallery-nav button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: transform 0.2s;
+}
+
+.gallery-nav button:hover {
+  transform: scale(1.3);
+}
+
+.gallery-nav span {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: white;
+}
+
+/* --- Modal Matnlari va Actionlar --- */
+.profile-product-modal h2 {
+  margin: 0 0 10px;
+  font-size: 1.5rem;
+  color: var(--profile-text);
+}
+
+.profile-product-modal p {
+  color: var(--profile-muted);
+  line-height: 1.6;
+  font-size: 0.95rem;
+  margin-bottom: 25px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.modal-actions button {
+  flex: 1;
+  height: 48px;
+  border-radius: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid var(--profile-border);
+}
+
+.btn-delete {
+  background: rgba(239, 68, 68, 0.1) !important;
+  color: #f87171 !important;
+  border-color: rgba(239, 68, 68, 0.2) !important;
+}
+
+.btn-delete:hover {
+  background: var(--profile-danger) !important;
+  color: white !important;
+}
+
+.modal-actions button:last-child {
+  background: var(--profile-surface-strong);
+  color: var(--profile-text);
+}
+
+.modal-actions button:last-child:hover {
+  background: #1e293b;
+}
+
+/* Modal ichidagi tahrirlash qismi */
+.modal-edit-fields {
+  padding: 0 5px;
+}
+
+.edit-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.edit-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.edit-group label {
+  font-size: 0.85rem;
+  color: var(--profile-muted);
+  font-weight: 600;
+}
+
+.modal-input {
+  background: var(--profile-surface-strong);
+  border: 1px solid var(--profile-border);
+  border-radius: 12px;
+  height: 45px;
+  padding: 0 12px;
+  color: white;
+  font-size: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.modal-input:focus {
+  border-color: var(--profile-accent);
+  outline: none;
+}
+
+.btn-save-modal {
+  width: 100%;
+  margin-top: 10px;
+  height: 48px !important;
+}
+
+.modal-actions-footer {
+  margin-top: 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--profile-border);
+  padding-top: 15px;
+}
+
+.btn-delete-link {
+  background: none;
+  border: none;
+  color: var(--profile-danger);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: underline;
+}
+
+.btn-close-modal {
+  background: var(--profile-surface);
+  border: 1px solid var(--profile-border);
+  color: white;
+  padding: 8px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* Kichik ekranlar uchun */
+@media (max-width: 480px) {
+  .edit-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.seller-products-section {
+  margin-top: 30px;
+  border-top: 1px solid var(--profile-border);
+  padding-top: 20px;
+}
+
+.profile-products-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.profile-product-item {
+  background: var(--profile-surface-strong);
+  border: 1px solid var(--profile-border);
+  border-radius: 20px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: 0.2s ease;
+}
+
+.profile-product-item img {
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.prod-name {
+  display: block;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.prod-meta {
+  color: var(--profile-muted);
+  font-size: 0.8rem;
+}
+
+/* Modal ichi */
+.modal-edit-content {
+  padding: 20px;
+}
+
+.edit-fields-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.field-box label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--profile-muted);
+  margin-bottom: 6px;
+}
+
+.modal-footer-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 25px;
+  padding-top: 15px;
+  border-top: 1px solid var(--profile-border);
+}
+
+.btn-danger-text {
+  background: none;
+  border: none;
+  color: var(--profile-danger);
+  cursor: pointer;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.gallery-nav {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.6);
+  padding: 5px 12px;
+  border-radius: 20px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}

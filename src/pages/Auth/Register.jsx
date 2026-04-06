@@ -9,6 +9,7 @@ export default function Register() {
     const [showPass, setShowPass] = useState(false);
     const [checkPassword, setCheckPassword] = useState(null);
     const [error, setError] = useState(null);
+    const [loading,setloading] = useState(null)
     const navigate = useNavigate();
 
 
@@ -25,6 +26,7 @@ export default function Register() {
 
     async function handleSubmit(e) {
         e.preventDefault();
+        setloading(true)
         const formData = new FormData(e.target);
         const email = formData.get('email');
         const password = formData.get('password');
@@ -82,6 +84,8 @@ export default function Register() {
                                 type={showPass ? "text" : "password"} 
                                 name="password" 
                                 placeholder="••••••••" 
+                                pattern='^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$'
+                                title='Parol kamida 8 ta belgi, bitta harf va bitta raqamdan iborat bolishi shart'
                                 required 
                             />
                             <button type="button" className="eye-icon" onClick={() => setShowPass(!showPass)}>
@@ -105,6 +109,11 @@ export default function Register() {
                     {checkPassword === false && <div className="auth-error-msg">⚠ Parollar mos kelmadi!</div>}
 
                     <button type="submit" className="auth-submit-btn">Ro'yxatdan o'tish</button>
+                    {loading ?<div class="textWrapper" style={{margin: "auto"}}>
+                    <p class="text">Loading...</p>
+                    <div class="invertbox"></div>
+               </div>: null}
+                    
                 </form>
 
                 <div className="auth-footer">

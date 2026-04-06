@@ -31,8 +31,7 @@ export default function Root() {
         </form>
 
         <div className="user-actions">
-          <button title="Savat"><i className="icon-cart"></i></button>
-          <button title="Bildirishnomalar"><i className="icon-bell"></i></button>
+       
         </div>
       </header>
 
