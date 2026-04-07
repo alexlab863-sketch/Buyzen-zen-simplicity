@@ -14,19 +14,19 @@ const MyCarousel = () => {
   const slides = [
     {
       id: 1,
-      image: "https://wallpaperaccess.com/full/1131083.jpg",
+      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShD_cf8QTkgt9R7kVBXJzwV82S-9hbExcckQ&s",
       title: "Bizda hamma narsa topliadi",
       description: ""
     },
     {
       id: 2,
-      image: "",
+      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIxQ0q1VRFvACRnD0FmEm3pPFf05Iw5TS53g&s",
       title: "Har Juma kuni optom narxlar!",
       description: "Faqat bizda eng yaxshi narxlar"
     },
     {
       id: 3,
-      image: "",
+      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRKQbp2A_2H9CbqveFxjNvjc9Mdi21IHjGUA&s",
       title: "Yangi To'plam",
       description: "O'z uslubingizni biz bilan toping"
     }
