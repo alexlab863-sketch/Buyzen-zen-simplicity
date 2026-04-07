@@ -225,6 +225,20 @@ export default function Profile() {
         avatar_url: metadata.avatar_url || '',
       };
 
+      let sellerFromSellersTable = false;
+
+      const { data: sellerData, error: sellerError } = await supabase
+        .from('sellers')
+        .select('id, is_seller, status')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      if (!sellerError && sellerData) {
+        sellerFromSellersTable = Boolean(
+          sellerData.is_seller || sellerData.status === 'active'
+        );
+      }
+
       let matchedSource = null;
       let profileData = null;
 
@@ -256,7 +270,7 @@ export default function Profile() {
 
       if (profileData) {
         const sellerFromTable = Boolean(profileData.is_seller || profileData.role === 'seller');
-        setIsSeller(sellerFromMeta || sellerFromTable);
+        setIsSeller(sellerFromMeta || sellerFromTable || sellerFromSellersTable);
         setForm({
           full_name: profileData.full_name || profileData.name || mergedForm.full_name,
           phone: profileData.phone || profileData.phone_number || mergedForm.phone,
@@ -265,7 +279,7 @@ export default function Profile() {
             profileData.avatar_url || profileData.avatar || profileData.image_url || mergedForm.avatar_url,
         });
       } else {
-        setIsSeller(sellerFromMeta);
+        setIsSeller(sellerFromMeta || sellerFromSellersTable);
         setForm(mergedForm);
       }
 
@@ -403,18 +417,19 @@ export default function Profile() {
   };
 
   if (loading) {
-    return <div class="textWrapper" style={{margin: "auto"}}>
-    <p class="text">Loading...</p>
-    <div class="invertbox"></div>
+    return <div className="textWrapper" style={{margin: "auto"}}>
+    <p className="text">Loading...</p>
+    <div className="invertbox"></div>
 </div>;
   }
 
   const avatarPreview = form.avatar_url?.trim();
   const displayName = form.full_name?.trim() || 'Foydalanuvchi';
+  const isBusy = saving;
 
   return (
     <div className="profile-wrapper">
-      <div className="profile-card">
+      <div className={`profile-card ${isBusy ? 'profile-card-busy' : ''}`}>
         <div className="profile-hero">
           <div className="profile-hero-copy">
             <span className="profile-badge">Shaxsiy Kabinet</span>
@@ -435,23 +450,36 @@ export default function Profile() {
         </div>
 
         <div className="profile-top">
-          <div className="profile-avatar-wrap">
-            {avatarPreview ? (
-              <img src={avatarPreview} alt="Profile avatar" className="profile-avatar" />
-            ) : (
-              <div className="profile-avatar profile-avatar-placeholder">
-                {displayName[0]?.toUpperCase() || 'U'}
+          <div className="profile-top-main">
+            <div className="profile-avatar-wrap">
+              {avatarPreview ? (
+                <img src={avatarPreview} alt="Profile avatar" className="profile-avatar" />
+              ) : (
+                <div className="profile-avatar profile-avatar-placeholder">
+                  {displayName[0]?.toUpperCase() || 'U'}
+                </div>
+              )}
+              <div className="profile-avatar-ring" />
+            </div>
+
+            <div className="profile-user-meta">
+              <h2>{displayName}</h2>
+              <p className="profile-email">{email}</p>
+              <div className="profile-pills">
+                <span className="profile-pill">Profil faol</span>
+                <span className="profile-pill profile-pill-soft">Buyzen member</span>
               </div>
-            )}
-            <div className="profile-avatar-ring" />
+            </div>
           </div>
 
-          <div className="profile-user-meta">
-            <h2>{displayName}</h2>
-            <p className="profile-email">{email}</p>
-            <div className="profile-pills">
-              <span className="profile-pill">Profil faol</span>
-              <span className="profile-pill profile-pill-soft">Buyzen member</span>
+          <div className="profile-top-side">
+            <div className="profile-mini-stat">
+              <span>To'ldirilgan</span>
+              <strong>{profileCompletion}%</strong>
+            </div>
+            <div className="profile-mini-stat">
+              <span>Status</span>
+              <strong>{isSeller ? 'Seller' : 'Mijoz'}</strong>
             </div>
           </div>
         </div>
@@ -472,14 +500,14 @@ export default function Profile() {
             />
 
             <div className="profile-upload-row">
-              <button type="button" className="profile-btn profile-btn-secondary" onClick={handleAvatarPick}>
+              <button type="button" className="profile-btn profile-btn-secondary" onClick={handleAvatarPick} disabled={isBusy}>
                 Qurilmadan tanlash
               </button>
               <button
                 type="button"
                 className="profile-btn profile-btn-ghost"
                 onClick={handleRemoveAvatar}
-                disabled={!avatarPreview}
+                disabled={!avatarPreview || isBusy}
               >
                 Avatarni olib tashlash
               </button>
@@ -529,27 +557,51 @@ export default function Profile() {
           )}
 
           <div className="profile-actions">
-            <button type="submit" className="profile-btn" disabled={saving}>
+            <button type="submit" className="profile-btn" disabled={isBusy}>
               {saving ? 'Saqlanmoqda...' : "O'zgarishlarni saqlash"}
             </button>
 
-            <Link to="/update-password" className="profile-link-btn">
+            <Link
+              to="/update-password"
+              className={`profile-link-btn ${isBusy ? 'profile-link-disabled' : ''}`}
+              onClick={(e) => {
+                if (isBusy) e.preventDefault();
+              }}
+              aria-disabled={isBusy}
+              tabIndex={isBusy ? -1 : 0}
+            >
               Parolni yangilash
             </Link>
 
-            <button onClick={handleLogout} className="profile-btn profile-logout-btn" type="button">
+            <button onClick={handleLogout} className="profile-btn profile-logout-btn" type="button" disabled={isBusy}>
               Chiqish
             </button>
           </div>
         </form>
 
-        <Link to="/become-seller" className="profile-seller-link">
-          sotuvchi profili
+        <Link
+          to="/become-seller"
+          className={`profile-seller-link ${isBusy ? 'profile-link-disabled' : ''}`}
+          onClick={(e) => {
+            if (isBusy) e.preventDefault();
+          }}
+          aria-disabled={isBusy}
+          tabIndex={isBusy ? -1 : 0}
+        >
+          {isSeller ? "Sotuvchi profili" : "Sotuvchi profili"}
         </Link>
 
         {isSeller && (
           <>
-            <Link to="/profile/add-product" className="profile-seller-link">
+            <Link
+              to="/profile/add-product"
+              className={`profile-seller-link ${isBusy ? 'profile-link-disabled' : ''}`}
+              onClick={(e) => {
+                if (isBusy) e.preventDefault();
+              }}
+              aria-disabled={isBusy}
+              tabIndex={isBusy ? -1 : 0}
+            >
               Yangi mahsulot qo'shish
             </Link>
             <SellerProductsPanel userId={userId} />

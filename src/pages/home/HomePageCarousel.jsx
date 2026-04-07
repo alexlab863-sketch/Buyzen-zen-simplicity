@@ -49,8 +49,10 @@ const MyCarousel = () => {
       >
         {slides.map((slide) => (
           <SwiperSlide key={slide.id}>
-            <div className="slide-content">
-              <img className='carousel-img' src={slide.image} alt={slide.title} />
+            <div className={`slide-content ${slide.image ? '' : 'slide-content-fallback'}`}>
+              {slide.image ? (
+                <img className='carousel-img' src={slide.image} alt={slide.title} />
+              ) : null}
               <div className="image-overlay">
                 <div className="text-content">
                   <h2>{slide.title}</h2>

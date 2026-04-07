@@ -1,54 +1,77 @@
 .home-page {
   display: grid;
-  gap: 24px;
+  gap: 28px;
 }
 
 .home-page h2 {
   margin: 0;
-  padding: 24px 28px;
-  border-radius: 24px;
-  background: var(--surface-color);
+  padding: 26px 28px;
+  border-radius: 28px;
+  background: linear-gradient(135deg, #ffffff 0%, #faf5ff 100%);
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-soft);
   font-size: clamp(1.6rem, 3vw, 2.2rem);
+  color: #2b164d;
 }
 
 .carousel-container {
   width: 100%;
   margin: 0 auto;
-  border-radius: 28px;
+  border-radius: 30px;
   overflow: hidden;
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-strong);
-  background: rgba(8, 17, 30, 0.88);
+  background: #fff;
 }
 
 .mySwiper {
   width: 100%;
-  height: 520px;
+  height: 460px;
 }
 
 .slide-content {
   position: relative;
   width: 100%;
   height: 100%;
+  background:
+    radial-gradient(circle at top right, rgba(216, 180, 254, 0.9), transparent 28%),
+    radial-gradient(circle at bottom left, rgba(196, 181, 253, 0.8), transparent 32%),
+    linear-gradient(135deg, #4c1d95 0%, #7c3aed 48%, #c084fc 100%);
+}
+
+.slide-content-fallback {
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.28), transparent 18%),
+    radial-gradient(circle at 80% 78%, rgba(255, 255, 255, 0.22), transparent 20%),
+    linear-gradient(135deg, #5b21b6 0%, #7c3aed 50%, #d946ef 100%);
 }
 
 .carousel-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  filter: saturate(1.02) contrast(1.02);
 }
 
 .image-overlay {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(90deg, rgba(7, 17, 31, 0.88) 0%, rgba(7, 17, 31, 0.28) 58%, transparent 100%),
-    linear-gradient(180deg, rgba(56, 189, 248, 0.12), transparent 60%);
+    linear-gradient(90deg, rgba(30, 17, 60, 0.72) 0%, rgba(76, 29, 149, 0.38) 42%, rgba(255, 255, 255, 0.08) 100%),
+    linear-gradient(180deg, rgba(15, 23, 42, 0.08), rgba(15, 23, 42, 0.16));
   display: flex;
   align-items: center;
   padding: 60px;
+}
+
+.text-content {
+  max-width: min(620px, 100%);
+  padding: 28px 30px;
+  border-radius: 28px;
+  background: rgba(28, 16, 53, 0.48);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 24px 44px rgba(29, 12, 66, 0.24);
 }
 
 .text-content h2,
@@ -74,16 +97,15 @@
 .text-content h2 {
   margin: 0 0 16px;
   font-size: clamp(2rem, 5vw, 3.4rem);
-  line-height: 1.02;
-  text-transform: uppercase;
+  line-height: 1.06;
+  text-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
 }
 
 .text-content p {
   margin: 0;
-  font-size: 1.08rem;
-  max-width: 580px;
+  font-size: 1.05rem;
   line-height: 1.7;
-  color: #dbeafe;
+  color: #f5f3ff;
 }
 
 :root {
@@ -91,13 +113,46 @@
   --swiper-navigation-size: 30px;
 }
 
+.swiper-button-next,
+.swiper-button-prev {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(8px);
+}
+
+.swiper-button-next::after,
+.swiper-button-prev::after {
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.swiper-pagination-bullet {
+  width: 10px;
+  height: 10px;
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.swiper-pagination-bullet-active {
+  width: 26px;
+  border-radius: 999px;
+  background: #ffffff;
+}
+
 @media (max-width: 768px) {
   .mySwiper {
-    height: 360px;
+    height: 340px;
   }
 
   .image-overlay {
     padding: 24px;
+  }
+
+  .text-content {
+    padding: 20px;
+    border-radius: 22px;
   }
 
   .text-content h2 {

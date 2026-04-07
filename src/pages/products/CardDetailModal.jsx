@@ -8,6 +8,8 @@ import 'swiper/css/pagination';
 import { supabase } from "../../supabaseClient";
 import "./Style/ProductStyle.css"; // Modal uchun alohida CSS fayli (tavsiya etiladi)
 
+const COMMENTS_STORAGE_KEY = "buyzen_product_comments";
+
 export default function CardDetailModal() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
@@ -19,8 +21,30 @@ export default function CardDetailModal() {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [commentSubmitting, setCommentSubmitting] = useState(false);
+  const [commentsStorageMode, setCommentsStorageMode] = useState("remote");
   
   const navigate = useNavigate();
+
+  const getLocalComments = () => {
+    try {
+      const raw = localStorage.getItem(COMMENTS_STORAGE_KEY);
+      const parsed = raw ? JSON.parse(raw) : {};
+      return parsed[id] || [];
+    } catch {
+      return [];
+    }
+  };
+
+  const saveLocalComments = (nextComments) => {
+    try {
+      const raw = localStorage.getItem(COMMENTS_STORAGE_KEY);
+      const parsed = raw ? JSON.parse(raw) : {};
+      parsed[id] = nextComments;
+      localStorage.setItem(COMMENTS_STORAGE_KEY, JSON.stringify(parsed));
+    } catch (error) {
+      console.error("Local comments save error:", error);
+    }
+  };
 
   // 1. Mahsulot, Savat va Kommentariyalarni yuklash
   useEffect(() => {
@@ -71,7 +95,14 @@ export default function CardDetailModal() {
       .eq('product_id', id)
       .order('created_at', { ascending: false });
 
-    if (!error) setComments(data);
+    if (error) {
+      setComments(getLocalComments());
+      setCommentsStorageMode("local");
+      return;
+    }
+
+    setComments(data || []);
+    setCommentsStorageMode("remote");
   };
 
   // 3. Savatga qo'shish/o'chirish mantiqi (Detail Page-da toggle bo'lgani ma'qul)
@@ -128,7 +159,23 @@ export default function CardDetailModal() {
           content: newComment.trim()
         }]);
 
-      if (error) throw error;
+      if (error) {
+        const fallbackComment = {
+          id: crypto.randomUUID(),
+          product_id: id,
+          user_id: user.id,
+          user_name: user.user_metadata.full_name || "Mijoz",
+          content: newComment.trim(),
+          created_at: new Date().toISOString(),
+        };
+
+        const nextComments = [fallbackComment, ...getLocalComments()];
+        saveLocalComments(nextComments);
+        setComments(nextComments);
+        setCommentsStorageMode("local");
+        setNewComment("");
+        return;
+      }
       
       setNewComment("");
       await fetchComments(); // Ro'yxatni yangilash
@@ -179,7 +226,6 @@ export default function CardDetailModal() {
             <p className="description">{product.description}</p>
             
             <div className="meta">
-              <p><b>Brend:</b> {product.brand || "Mavjud emas"}</p>
               <p><b>Kategoriya:</b> {product.category || "Umumiy"}</p>
               <p><b>Holat:</b> {product.stock_count > 0 ? "Sotuvda bor" : "Tugagan"}</p>
             </div>
@@ -198,6 +244,9 @@ export default function CardDetailModal() {
         <div className="comments-section">
           <hr />
           <h3>Mijozlar fikri ({comments.length})</h3>
+          {commentsStorageMode === "local" ? (
+            <p className="comments-note">Izohlar hozircha lokal rejimda saqlanmoqda.</p>
+          ) : null}
 
           <form onSubmit={handleSendComment} className="comment-form">
             <textarea 

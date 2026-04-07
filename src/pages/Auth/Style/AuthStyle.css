@@ -4,9 +4,9 @@
   place-items: center;
   padding: 24px;
   background:
-    radial-gradient(circle at top right, rgba(56, 189, 248, 0.14), transparent 26%),
-    radial-gradient(circle at bottom left, rgba(34, 197, 94, 0.1), transparent 28%),
-    linear-gradient(180deg, #07111f 0%, #081625 45%, #09111d 100%);
+    radial-gradient(circle at top left, rgba(168, 85, 247, 0.12), transparent 25%),
+    radial-gradient(circle at bottom right, rgba(124, 58, 237, 0.08), transparent 22%),
+    linear-gradient(180deg, #f7f7fb 0%, #ffffff 52%, #faf5ff 100%);
   color: var(--text-color);
 }
 
@@ -14,7 +14,7 @@
   width: min(100%, 460px);
   padding: 34px;
   border-radius: 28px;
-  background: rgba(8, 17, 30, 0.9);
+  background: rgba(255, 255, 255, 0.96);
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-strong);
 }
@@ -22,6 +22,22 @@
 .auth-card h1 {
   margin: 0 0 8px;
   font-size: 1.8rem;
+  color: #2b164d;
+}
+
+.auth-logo-section {
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.auth-logo-section .logo {
+  color: #7c3aed !important;
+}
+
+.auth-logo-section p,
+.subtitle {
+  margin: 10px 0 0;
+  color: #6b7280;
 }
 
 .auth-card p.subtitle,
@@ -46,16 +62,17 @@
   height: 50px;
   padding: 0 16px;
   border-radius: 16px;
-  border: 1px solid rgba(148, 163, 184, 0.16);
-  background: var(--surface-strong);
-  color: var(--text-color);
+  border: 1px solid #e7ddff;
+  background: #fbf9ff;
+  color: #1f2937;
   transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  box-sizing: border-box;
 }
 
 .auth-form-group input:focus {
   outline: none;
-  border-color: rgba(56, 189, 248, 0.65);
-  box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.12);
+  border-color: rgba(124, 58, 237, 0.55);
+  box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.08);
   transform: translateY(-1px);
 }
 
@@ -79,8 +96,8 @@
   min-height: 52px;
   border: none;
   border-radius: 18px;
-  background: linear-gradient(135deg, var(--accent-color), var(--accent-strong));
-  color: #03111d;
+  background: linear-gradient(135deg, #7c3aed, #a855f7);
+  color: #ffffff;
   font-weight: 800;
   cursor: pointer;
   transition: transform 0.18s ease, box-shadow 0.18s ease;
@@ -93,7 +110,7 @@
 .auth-submit-btn:hover,
 .auth-forgot-section-escape-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 18px 36px rgba(56, 189, 248, 0.2);
+  box-shadow: 0 18px 36px rgba(124, 58, 237, 0.18);
 }
 
 .auth-footer {
@@ -103,22 +120,22 @@
 }
 
 .auth-link {
-  color: #7dd3fc;
+  color: #7c3aed;
   text-decoration: none;
   font-weight: 600;
 }
 
 .auth-link:hover {
-  color: #bae6fd;
+  color: #5b21b6;
 }
 
 .auth-error-msg {
   margin-bottom: 18px;
   padding: 14px 16px;
   border-radius: 16px;
-  background: rgba(239, 68, 68, 0.12);
-  border: 1px solid rgba(239, 68, 68, 0.18);
-  color: #fecaca;
+  background: #fff5f7;
+  border: 1px solid #ffd4dc;
+  color: #be123c;
 }
 
 .auth-forgot-section {
@@ -126,32 +143,44 @@
   text-align: center;
 }
 
-.textWrapper {
-  height: fit-content;
-  min-width: 3rem;
-  width: fit-content;
+.confirmation-card {
+  text-align: center;
+}
+
+.icon-wrapper {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 16px;
+  border-radius: 22px;
+  display: grid;
+  place-items: center;
   font-size: 2rem;
-  font-weight: 700;
-  letter-spacing: 0.25ch;
-  position: relative;
-  z-index: 0;
-  color: white;
+  background: #f6f1ff;
 }
 
-.invertbox {
+.confirmation-text {
+  color: #6b7280;
+  line-height: 1.7;
+}
+
+.back-btn {
   position: absolute;
-  height: 100%;
-  aspect-ratio: 1/1;
-  left: 0;
-  top: 0;
-  border-radius: 20%;
-  background-color: rgba(255, 255, 255, 0.1);
-  backdrop-filter: invert(100%);
-  animation: move 2s ease-in-out infinite;
+  top: 24px;
+  left: 24px;
+  min-height: 42px;
+  padding: 0 14px;
+  border-radius: 14px;
+  border: 1px solid #e8ddff;
+  background: #ffffff;
+  color: #6d28d9;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 10px 24px rgba(124, 58, 237, 0.08);
 }
 
-@keyframes move {
-  50% {
-    left: calc(100% - 3rem);
-  }
+.back-icon {
+  font-size: 18px;
 }
