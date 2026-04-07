@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import Card from './Card';
 import ReactPaginate from 'react-paginate'; 
 import { supabase } from '../../supabaseClient';
+import { CATEGORY_OPTIONS } from '../../constants/categories';
 
 const Paginate = ReactPaginate.default ? ReactPaginate.default : ReactPaginate;
 
@@ -11,8 +12,7 @@ function Products({ showFilters = true }) { // Katta F bilan yozgan ma'qul
   
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Barchasi');
-  const [priceRange, setPriceRange] = useState({ min: 0, max: 10000000 });
-  const [sortBy, setSortBy] = useState('newest');
+  const [priceRange, setPriceRange] = useState({ min: '', max: '10000000' });
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -35,24 +35,24 @@ function Products({ showFilters = true }) { // Katta F bilan yozgan ma'qul
   }, []);
 
   const categories = useMemo(() => {
-    const unique = [...new Set(products.map(p => p.category))].filter(Boolean);
-    return ['Barchasi', ...unique];
+    const productCategories = [...new Set(products.map((p) => p.category))].filter(Boolean);
+    const merged = [...new Set([...CATEGORY_OPTIONS, ...productCategories])];
+    return ['Barchasi', ...merged];
   }, [products]);
 
   const filteredProducts = useMemo(() => {
+    const minPrice = priceRange.min === '' ? 0 : Number(priceRange.min);
+    const maxPrice = priceRange.max === '' ? Number.POSITIVE_INFINITY : Number(priceRange.max);
+
     return products
       .filter(p => {
         const matchesCategory = selectedCategory === 'Barchasi' || p.category === selectedCategory;
         const matchesSearch = (p.name || '').toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesPrice = (p.price || 0) >= priceRange.min && (p.price || 0) <= priceRange.max;
+        const matchesPrice = (p.price || 0) >= minPrice && (p.price || 0) <= maxPrice;
         return matchesCategory && matchesSearch && matchesPrice;
       })
-      .sort((a, b) => {
-        if (sortBy === 'cheap') return a.price - b.price;
-        if (sortBy === 'expensive') return b.price - a.price;
-        return new Date(b.created_at) - new Date(a.created_at);
-      });
-  }, [products, searchTerm, selectedCategory, priceRange, sortBy]);
+      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  }, [products, searchTerm, selectedCategory, priceRange]);
 
   const [itemOffset, setItemOffset] = useState(0);
   const itemsPerPage = 8;
@@ -65,9 +65,9 @@ function Products({ showFilters = true }) { // Katta F bilan yozgan ma'qul
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  if (loading) return <div class="textWrapper" style={{margin: "auto"}}>
-  <p class="text">Loading...</p>
-  <div class="invertbox"></div>
+  if (loading) return <div className="textWrapper" style={{margin: "auto"}}>
+  <p className="text">Loading...</p>
+  <div className="invertbox"></div>
 </div>;
 
   return (
@@ -88,55 +88,55 @@ function Products({ showFilters = true }) { // Katta F bilan yozgan ma'qul
           </div>
 
           <div className="filter-group">
-            <h4>Kategoriya</h4>
-            <div className="category-list">
-              {categories.map(cat => (
-                <label key={cat} className="category-item">
-                  <input 
-                    type="radio" 
-                    name="category" 
-                    checked={selectedCategory === cat}
-                    onChange={() => {
-                      setSelectedCategory(cat);
-                      setItemOffset(0);
-                    }}
-                  />
-                  <span>{cat}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          <div className="filter-group">
             <h4>Narx oralig'i</h4>
             <div className="price-inputs">
               <input 
                 type="number" 
+                placeholder="0"
                 value={priceRange.min}
-                onChange={(e) => setPriceRange({...priceRange, min: Number(e.target.value)})}
+                onChange={(e) => setPriceRange({...priceRange, min: e.target.value})}
               />
               <input 
                 type="number" 
+                placeholder="10000000"
                 value={priceRange.max}
-                onChange={(e) => setPriceRange({...priceRange, max: Number(e.target.value)})}
+                onChange={(e) => setPriceRange({...priceRange, max: e.target.value})}
+                onFocus={(e) => {
+                  if (priceRange.max === '10000000') {
+                    setPriceRange({ ...priceRange, max: '' });
+                  }
+                }}
+                onBlur={() => {
+                  if (priceRange.max === '') {
+                    setPriceRange({ ...priceRange, max: '10000000' });
+                  }
+                }}
               />
             </div>
           </div>
 
           <div className="filter-group">
-            <h4>Saralash</h4>
-            <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="filter-select">
-              <option value="newest">Yangi qo'shilganlar</option>
-              <option value="cheap">Arzonroq</option>
-              <option value="expensive">Qimmatroq</option>
+            <h4>Kategoriya</h4>
+            <select
+              value={selectedCategory}
+              onChange={(e) => {
+                setSelectedCategory(e.target.value);
+                setItemOffset(0);
+              }}
+              className="filter-select"
+            >
+              {categories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
             </select>
           </div>
 
           <button className="reset-filter" onClick={() => {
             setSelectedCategory('Barchasi');
             setSearchTerm('');
-            setPriceRange({ min: 0, max: 10000000 });
-            setSortBy('newest');
+            setPriceRange({ min: '', max: '10000000' });
           }}>
             Filtrni tozalash
           </button>

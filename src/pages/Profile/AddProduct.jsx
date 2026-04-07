@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../../supabaseClient';
 import { isMissingSchemaError, isRlsError } from '../../utils/supabaseAdaptive';
+import { CATEGORY_OPTIONS } from '../../constants/categories';
 import './Profile.css';
 
 const INITIAL_FORM = {
@@ -11,14 +12,6 @@ const INITIAL_FORM = {
   stock_count: '',
   category: '',
 };
-
-const CATEGORY_OPTIONS = [
-  'Elektronika', 'Telefonlar', 'Noutbuklar', 'Aksessuarlar', 'Maishiy texnika',
-  'Erkaklar kiyimi', 'Ayollar kiyimi', 'Bolalar kiyimi', 'Oyoq kiyim',
-  'Gozallik mahsulotlari', 'Salomatlik', 'Oziq-ovqat', 'Ichimliklar',
-  'Kitoblar', 'Sport jihozlari', 'Avto mahsulotlar', 'Uy jihozlari',
-  'Mebel', 'Oyinqchoqlar', 'Zargarlik buyumlari',
-];
 
 export default function AddProduct() {
   const navigate = useNavigate();
@@ -166,9 +159,9 @@ export default function AddProduct() {
     }
   };
 
-  if (loading) return <div class="textWrapper" style={{margin: "auto"}}>
-  <p class="text">Loading...</p>
-  <div class="invertbox"></div>
+  if (loading) return <div className="textWrapper" style={{margin: "auto"}}>
+  <p className="text">Loading...</p>
+  <div className="invertbox"></div>
 </div>;
 
   return (

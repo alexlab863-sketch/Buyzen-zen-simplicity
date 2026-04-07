@@ -109,9 +109,9 @@ export default function Register() {
                     {checkPassword === false && <div className="auth-error-msg">⚠ Parollar mos kelmadi!</div>}
 
                     <button type="submit" className="auth-submit-btn">Ro'yxatdan o'tish</button>
-                    {loading ?<div class="textWrapper" style={{margin: "auto"}}>
-                    <p class="text">Loading...</p>
-                    <div class="invertbox"></div>
+                    {loading ?<div className="textWrapper" style={{margin: "auto"}}>
+                    <p className="text">Loading...</p>
+                    <div className="invertbox"></div>
                </div>: null}
                     
                 </form>

@@ -1,9 +1,37 @@
-import { Outlet, NavLink } from "react-router-dom";
+import { Outlet, NavLink, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 import logo from "../../assets/logo-old.png"; 
+import { supabase } from "../../supabaseClient";
 import "./Root.css";
 
 export default function Root() {
+  const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const syncSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setIsLoggedIn(Boolean(session));
+    };
+
+    syncSession();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsLoggedIn(Boolean(session));
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    localStorage.clear();
+    navigate("/login");
+  };
+
   return (
     <>
       <header className="header">
@@ -26,12 +54,12 @@ export default function Root() {
           </NavLink>
         </nav>
 
-        <form className="search-form">
-          <input type="text" className="search-input" placeholder="Qidirish..." />
-        </form>
-
         <div className="user-actions">
-       
+          {isLoggedIn ? (
+            <button type="button" className="header-logout-btn" onClick={handleLogout}>
+              Chiqish
+            </button>
+          ) : null}
         </div>
       </header>
 
