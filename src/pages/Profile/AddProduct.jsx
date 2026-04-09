@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../../supabaseClient';
 import { isMissingSchemaError, isRlsError } from '../../utils/supabaseAdaptive';
 import { CATEGORY_OPTIONS } from '../../constants/categories';
+import { BRAND_OPTIONS } from '../../constants/brands';
 import './Profile.css';
 
 const INITIAL_FORM = {
@@ -11,6 +12,7 @@ const INITIAL_FORM = {
   price: '',
   stock_count: '',
   category: '',
+  brand: '',
 };
 
 export default function AddProduct() {
@@ -98,9 +100,9 @@ export default function AddProduct() {
     e.preventDefault();
     if (!userId || !isSeller || submitting) return;
 
-    const { name, description, category, price, stock_count } = form;
+    const { name, description, category, brand, price, stock_count } = form;
 
-    if (!name || !description || !category || imageFiles.length !== 3) {
+    if (!name || !description || !category || !brand || imageFiles.length !== 3) {
       setStatus({ type: 'error', text: "Barcha maydonlarni to'ldiring va 3 ta rasm yuklang." });
       return;
     }
@@ -138,6 +140,7 @@ export default function AddProduct() {
         price: Number(price),
         stock_count: Number(stock_count),
         category: category,
+        brand: brand,
         image_url: uploadedUrls[0], // Asosiy rasm
         content: {
           gallery: uploadedUrls,
@@ -232,6 +235,19 @@ export default function AddProduct() {
               <option value="">Kategoriyani tanlang</option>
               {CATEGORY_OPTIONS.map((cat) => (
                 <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </select>
+
+            <select
+              name="brand"
+              className="profile-input"
+              value={form.brand}
+              onChange={handleChange}
+              required
+            >
+              <option value="">Brandni tanlang</option>
+              {BRAND_OPTIONS.map((brandName) => (
+                <option key={brandName} value={brandName}>{brandName}</option>
               ))}
             </select>
 

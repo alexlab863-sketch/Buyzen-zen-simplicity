@@ -20,6 +20,7 @@ export default function CardDetailModal() {
   // Kommentariya uchun state-lar
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
+  const [newRating, setNewRating] = useState(5);
   const [commentSubmitting, setCommentSubmitting] = useState(false);
   const [commentsStorageMode, setCommentsStorageMode] = useState("remote");
   
@@ -156,7 +157,8 @@ export default function CardDetailModal() {
           product_id: id,
           user_id: user.id,
           user_name: user.user_metadata.full_name || "Mijoz",
-          content: newComment.trim()
+          content: newComment.trim(),
+          rating: newRating
         }]);
 
       if (error) {
@@ -166,6 +168,7 @@ export default function CardDetailModal() {
           user_id: user.id,
           user_name: user.user_metadata.full_name || "Mijoz",
           content: newComment.trim(),
+          rating: newRating,
           created_at: new Date().toISOString(),
         };
 
@@ -174,10 +177,12 @@ export default function CardDetailModal() {
         setComments(nextComments);
         setCommentsStorageMode("local");
         setNewComment("");
+        setNewRating(5);
         return;
       }
       
       setNewComment("");
+      setNewRating(5);
       await fetchComments(); // Ro'yxatni yangilash
     } catch (err) {
       alert("Izoh yuborishda xatolik: " + err.message);
@@ -227,6 +232,7 @@ export default function CardDetailModal() {
             
             <div className="meta">
               <p><b>Kategoriya:</b> {product.category || "Umumiy"}</p>
+              <p><b>Brand:</b> {product.brand || "Brand mavjud emas"}</p>
               <p><b>Holat:</b> {product.stock_count > 0 ? "Sotuvda bor" : "Tugagan"}</p>
             </div>
 
@@ -249,6 +255,21 @@ export default function CardDetailModal() {
           ) : null}
 
           <form onSubmit={handleSendComment} className="comment-form">
+            <div className="rating-picker">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  key={star}
+                  type="button"
+                  className={`star-btn ${star <= newRating ? 'active' : ''}`}
+                  onClick={() => setNewRating(star)}
+                  aria-label={`${star} yulduz`}
+                >
+                  ★
+                </button>
+              ))}
+              <span className="rating-value">{newRating}/5</span>
+            </div>
+
             <textarea 
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
@@ -262,15 +283,23 @@ export default function CardDetailModal() {
 
           <div className="comments-list">
             {comments.length > 0 ? (
-              comments.map((c) => (
-                <div key={c.id} className="comment-item">
-                  <div className="comment-header">
-                    <strong>{c.user_name}</strong>
-                    <span>{new Date(c.created_at).toLocaleDateString()}</span>
+              comments.map((c) => {
+                const ratingValue = Math.max(1, Math.min(5, Number(c.rating) || 5));
+
+                return (
+                  <div key={c.id} className="comment-item">
+                    <div className="comment-header">
+                      <strong>{c.user_name}</strong>
+                      <span>{new Date(c.created_at).toLocaleDateString()}</span>
+                    </div>
+                    <div className="comment-rating">
+                      {'★'.repeat(ratingValue)}
+                      {'☆'.repeat(5 - ratingValue)}
+                    </div>
+                    <p>{c.content}</p>
                   </div>
-                  <p>{c.content}</p>
-                </div>
-              ))
+                );
+              })
             ) : (
               <p className="no-comments">Hozircha izohlar yo'q. Birinchi bo'lib fikr bildiring!</p>
             )}

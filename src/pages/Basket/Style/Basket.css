@@ -207,6 +207,65 @@
   box-shadow: 0 18px 34px rgba(124, 58, 237, 0.24);
 }
 
+.basket-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(17, 24, 39, 0.45);
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  z-index: 1200;
+}
+
+.basket-modal {
+  width: min(560px, 100%);
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid #ede3ff;
+  box-shadow: 0 24px 44px rgba(17, 24, 39, 0.2);
+  padding: 24px;
+  display: grid;
+  gap: 14px;
+}
+
+.basket-modal h3 {
+  margin: 0;
+  color: #2b164d;
+}
+
+.basket-modal p {
+  margin: 0;
+  color: #374151;
+  line-height: 1.6;
+}
+
+.basket-inline-action {
+  border: none;
+  background: transparent;
+  color: #6d28d9;
+  font-weight: 700;
+  padding: 0;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.basket-copy-status {
+  color: #166534 !important;
+  font-size: 0.95rem;
+  margin-top: -4px !important;
+}
+
+.basket-modal-btn {
+  justify-self: end;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 18px;
+  background: linear-gradient(135deg, #7c3aed, #a855f7);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
 @media (max-width: 600px) {
   .summary-content {
     flex-direction: column;
