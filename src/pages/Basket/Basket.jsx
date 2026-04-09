@@ -3,9 +3,15 @@ import { supabase } from '../../supabaseClient';
 import "./Style/Basket.css";
 
 const Basket = () => {
+  const CARD_NUMBER = '9860 1566 22 86 6556';
+  const CONTACT_PHONE = '93 493 33 40';
+  const TELEGRAM_USERNAME = '@Komiljonov09';
+  const TELEGRAM_URL = 'https://t.me/Komiljonov09';
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [orderModalOpen, setOrderModalOpen] = useState(false);
+  const [copyMessage, setCopyMessage] = useState('');
 
   useEffect(() => {
     fetchCart();
@@ -116,7 +122,7 @@ const Basket = () => {
       if (removeError) throw removeError;
 
       setCartItems((prev) => prev.filter((cartItem) => cartItem.cart_id !== item.cart_id));
-      alert(`${item.name} muvaffaqiyatli sotib olindi.`);
+      setOrderModalOpen(true);
     } catch (error) {
       alert(`Xatolik: ${error.message}`);
     } finally {
@@ -170,7 +176,7 @@ const Basket = () => {
       }
 
       setCartItems([]);
-      alert("Barcha mahsulotlar muvaffaqiyatli sotib olindi.");
+      setOrderModalOpen(true);
     } catch (error) {
       alert(`Xatolik: ${error.message}`);
     } finally {
@@ -178,8 +184,28 @@ const Basket = () => {
     }
   };
 
-  // Umumiy hisobni chiqarish
   const totalSum = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+
+  const handleCopyText = async (value, label = "Ma'lumot") => {
+    try {
+      if (navigator?.clipboard?.writeText) {
+        await navigator.clipboard.writeText(value);
+      } else {
+        const temp = document.createElement('textarea');
+        temp.value = value;
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand('copy');
+        document.body.removeChild(temp);
+      }
+
+      setCopyMessage(`${label} nusxalandi.`);
+      setTimeout(() => setCopyMessage(''), 2000);
+    } catch (error) {
+      setCopyMessage("Nusxalashda xatolik bo'ldi.");
+      setTimeout(() => setCopyMessage(''), 2000);
+    }
+  };
 
   if (loading) return <div className="textWrapper" style={{margin: "auto"}}>
   <p className="text">Loading...</p>
@@ -226,7 +252,6 @@ const Basket = () => {
             ))}
           </div>
 
-          {/* UMUMIY BUYURTMA BERISH QISMI (PASTDA) */}
           <div className="basket-summary-fixed">
              <div className="summary-content">
                 <div className="total-info">
@@ -242,6 +267,49 @@ const Basket = () => {
       ) : (
         <div className="empty-cart">
           <p className="empty-msg">Savatchangiz bo'sh.</p>
+        </div>
+      )}
+
+      {orderModalOpen && (
+        <div className="basket-modal-overlay" role="dialog" aria-modal="true">
+          <div className="basket-modal">
+            <h3>Buyurtma qabul qilindi</h3>
+            <p>
+              Sizning buyurtmangiz tayyor bo&apos;lishiga oxirgi qadam qoldi. Siz to&apos;lovni
+              {' '}
+              <button
+                type="button"
+                className="basket-inline-action"
+                onClick={() => handleCopyText(CARD_NUMBER, 'Karta raqami')}
+              >
+                {CARD_NUMBER}
+              </button>
+              {' '}karta raqamiga yuborib, to&apos;lov chekini
+              {' '}
+              <a
+                href={TELEGRAM_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="basket-inline-action"
+              >
+                {TELEGRAM_USERNAME}
+              </a>
+              {' '}Telegram manziliga yuboring va joylashuvingiz borasida ham shu yerda gaplashasiz yani shu yerda yetkazib berish manzilini yuborasiz. Agar bunday qila olmasangiz
+              {' '}
+              <button
+                type="button"
+                className="basket-inline-action"
+                onClick={() => handleCopyText(CONTACT_PHONE, 'Telefon raqam')}
+              >
+                {CONTACT_PHONE}
+              </button>
+              {' '}raqamiga telefon orqali bog&apos;laning.
+            </p>
+            {copyMessage && <p className="basket-copy-status">{copyMessage}</p>}
+            <button className="basket-modal-btn" onClick={() => setOrderModalOpen(false)}>
+              Tushunarli
+            </button>
+          </div>
         </div>
       )}
     </div>
