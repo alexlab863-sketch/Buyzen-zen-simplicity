@@ -8,8 +8,10 @@ const INITIAL_FORM = {
   name: '',
   description: '',
   price: '',
+  brand: '',
   stock_count: '',
   category: '',
+  
 };
 
 const CATEGORY_OPTIONS = [
@@ -105,7 +107,7 @@ export default function AddProduct() {
     e.preventDefault();
     if (!userId || !isSeller || submitting) return;
 
-    const { name, description, category, price, stock_count } = form;
+    const { name, description, category, price, stock_count, brand } = form;
 
     if (!name || !description || !category || imageFiles.length !== 3) {
       setStatus({ type: 'error', text: "Barcha maydonlarni to'ldiring va 3 ta rasm yuklang." });
@@ -145,6 +147,7 @@ export default function AddProduct() {
         price: Number(price),
         stock_count: Number(stock_count),
         category: category,
+        brand: brand.trim(),
         image_url: uploadedUrls[0], // Asosiy rasm
         content: {
           gallery: uploadedUrls,
@@ -220,6 +223,7 @@ export default function AddProduct() {
             />
 
             <input
+              pattern='\d*'
               type="number"
               name="stock_count"
               className="profile-input"
@@ -251,6 +255,16 @@ export default function AddProduct() {
               onChange={handleImageSelect}
               hidden
             />
+
+            <input
+             type="text"
+             name="brand"
+             className="profile-input"
+             placeholder="Brend"
+             value={form.brand}
+             onChange={handleChange}
+             required
+             />
 
             <button
               type="button"
