@@ -196,3 +196,30 @@ textarea {
     padding: 18px 8px 36px;
   }
 }
+
+.logout-button {
+  /* Asosiy ko'rinish */
+  background-color: #ff4d4d; /* Qizil rang */
+  color: white;
+  border: none;
+  border-radius: 6px;
+     width: 100px;
+
+  /* Shrift va tekst */
+padding: 15px 20px;
+  font-weight: 600;
+  cursor: pointer;
+  
+  /* Animatsiya silliq chiqishi uchun */
+  transition: background-color 0.3s ease, transform 0.2s active;
+}
+
+/* Sichqoncha ustiga kelganda (Hover) */
+.logout-button:hover {
+  background-color: #ff1a1a; /* Sal to'qroq qizil */
+}
+
+/* Tugma bosilganda (Active) */
+.logout-button:active {
+  transform: scale(0.95); /* Bir oz kichrayish effekti */
+}
