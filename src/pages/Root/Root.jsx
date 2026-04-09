@@ -1,9 +1,16 @@
-import { Outlet, NavLink } from "react-router-dom";
-
+import { Outlet, NavLink, useNavigate, } from "react-router-dom";
+import { supabase } from "../../supabaseClient";
 import logo from "../../assets/logo-old.png"; 
 import "./Root.css";
 
 export default function Root() {
+  const navigate = useNavigate()
+
+ async  function handleLogout(){
+    await supabase.auth.signOut();
+    localStorage.clear();
+    navigate('/login');
+  }
   return (
     <>
       <header className="header">
@@ -26,9 +33,7 @@ export default function Root() {
           </NavLink>
         </nav>
 
-        <form className="search-form">
-          <input type="text" className="search-input" placeholder="Qidirish..." />
-        </form>
+       <button className="logout-button" onClick={handleLogout}>Log Out</button>
 
         <div className="user-actions">
        
